@@ -10,4 +10,11 @@ fn main() {
     println!("first element of the array: {}", xs[0]);
 
     analyze_slice(&xs[2 .. 4]);
+
+ 
+
+    for x in 0..10 {
+        println!("{}", x);
+    }
+
 }
