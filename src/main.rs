@@ -11,10 +11,12 @@ fn main() {
 
     analyze_slice(&xs[2 .. 4]);
 
- 
-
     for x in 0..10 {
         println!("{}", x);
+    }
+
+    for (i,j) in (5..10).enumerate() {
+        println!("i = {} and j = {}", i, j);
     }
 
 }
