@@ -6,6 +6,9 @@ fn analyze_slice(slice: &[i32]) {
 
 fn main() {
     let xs: [i32; 5] = [1, 2, 3, 4, 5];
+    let tuple = (1, 2, 3);
+
+    let y = tuple.1;
 
     println!("first element of the array: {}", xs[0]);
 
@@ -18,5 +21,7 @@ fn main() {
     for (i,j) in (5..10).enumerate() {
         println!("i = {} and j = {}", i, j);
     }
+
+    println!("y is {}", y);
 
 }
