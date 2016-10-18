@@ -24,16 +24,13 @@ fn main() {
 
     println!("y is {}", y);
 
-    let mut x = 5; 
-    let mut done = false; 
+    let mut x = 5;
 
-    while !done {
-        x += x - 3;
+    loop {
+        x += 3;
 
         println!("{}", x);
 
-        if x % 5 == 0 {
-            done = true;
-        }
+        if x % 5 == 0 { break; }
     }
 }
