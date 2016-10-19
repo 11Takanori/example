@@ -4,10 +4,6 @@ fn analyze_slice(slice: &[i32]) {
     println!("the slice has {} elements", slice.len());
 }
 
-fn foo(v1: &Vec<i32>, v2: &Vec<i32>) -> i32 {
-    42
-}
-
 fn main() {
     let xs: [i32; 5] = [1, 2, 3, 4, 5];
     let tuple = (1, 2, 3);
@@ -37,10 +33,4 @@ fn main() {
 
         if x % 5 == 0 { break; }
     }
-
-    let v1 = vec![1, 2, 3];
-    let v2 = vec![1, 2, 3];
-
-    let answer = foo(&v1, &v2);
-    println!("{}", answer);
 }
