@@ -33,4 +33,11 @@ fn main() {
 
         if x % 5 == 0 { break; }
     }
+
+    let mut a = 5;
+    {
+        let b = &mut a;
+        *b += 1;
+    }
+    println!("{}", a)
 }
