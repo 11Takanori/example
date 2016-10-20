@@ -20,4 +20,15 @@ fn main() {
 
     let Inches(integer_lenght) = length;
     println!("length is {}f inches", integer_lenght);
+
+    let x = 5;
+
+    match x {
+        1 => println!("one"),
+        2 => println!("two"),
+        3 => println!("three"),
+        4 => println!("four"),
+        5 => println!("five"),
+        _ => println!("something else"),
+    }
 }
