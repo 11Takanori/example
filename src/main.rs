@@ -1,14 +1,17 @@
 #[derive(Debug)]
-enum OptionalTuple {
-    Value(i32, i32, i32),
-    Missing,
+struct Circle {
+    x: f64,
+    y: f64,
+    radius: f64,
+}
+
+impl Circle {
+     fn area(&self) -> f64 {
+         std::f64::consts::PI * (self.radius * self.radius)
+     }
 }
 
 fn main() {
-    let x = OptionalTuple::Value(5, -2, 3);
-
-    match x {
-        OptionalTuple::Value(..) => println!("Got a tuple! "),
-        OptionalTuple::Missing => println!("No such luck."),
-    }
+    let c = Circle { x: 0.0, y: 0.0, radius: 2.0 };
+    println!("{}", c.area());
 }
