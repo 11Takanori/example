@@ -23,4 +23,11 @@ fn main() {
         println!("{}", s);
         lm();
     }
+
+    {
+        let lm = move || {
+            println!("{}", s);
+        };
+        lm();
+    }
 }
