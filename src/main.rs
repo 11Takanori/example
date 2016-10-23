@@ -1,21 +1,14 @@
-use std::fmt::Debug;
-
-fn foo<T: Clone, K: Clone + Debug>(x: T, y: K) {
-    x.clone();
-    y.clone();
-    println!("{:?}", y);
+struct Firework {
+    strength: i32,
 }
 
-fn bar<T, K>(x: T, y: K)
-    where T: Clone,
-          K: Clone + Debug {
-    
-    x.clone();
-    y.clone();
-    println!("{:?}", y);
+impl Drop for Firework {
+    fn drop(&mut self) {
+        println!("BOOM times {}!!!", self.strength);
+    }
 }
 
 fn main() {
-    foo("Hello", "world");
-    bar("Hello", "world");
+    let firecraker = Firework { strength: 1 };
+    let tnt = Firework { strength: 100 };
 }
