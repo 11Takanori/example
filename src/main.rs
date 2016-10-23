@@ -46,4 +46,3 @@ fn main() {
     print_area(c);
     print_area(s);
 }
-
