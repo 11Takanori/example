@@ -1,23 +1,4 @@
-trait Foo {
-     fn method(&self) -> String;
-}
-
-impl Foo for u8 {
-     fn method(&self) -> String { format!("u8: {}", *self) }
-}
-
-impl Foo for String {
-     fn method(&self) -> String { format!("string: {}", *self) }
-}
-
-fn do_somethig(x: &Foo) {
-    x.method();
-}
-
 fn main() {
-    let x = 5u8;
-    let y = "Hello".to_string();
-
-    do_somethig(&x as &Foo);    
-    do_somethig(&y);
+    let plus_one = |x: i32| x + 1;
+    assert_eq!(2, plus_one(1));
 }
