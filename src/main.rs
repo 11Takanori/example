@@ -1,14 +1,6 @@
-struct Firework {
-    strength: i32,
-}
-
-impl Drop for Firework {
-    fn drop(&mut self) {
-        println!("BOOM times {}!!!", self.strength);
-    }
-}
-
 fn main() {
-    let firecraker = Firework { strength: 1 };
-    let tnt = Firework { strength: 100 };
+    let mut v = vec![1, 3, 5, 7, 11];
+    while let Some(x) = v.pop() {
+        println!("{}", x);
+    }
 }
