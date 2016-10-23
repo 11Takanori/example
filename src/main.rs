@@ -1,23 +1,18 @@
-struct Rectangle<T> {
-    x: T,
-    y: T,
-    width: T,
-    height: T,
+use std::fmt::Debug;
+
+fn foo<T: Clone, K: Clone + Debug>(x: T, y: K) {
+    x.clone();
+    y.clone();
+    println!("{:?}", y);
 }
 
-impl<T: PartialEq> Rectangle<T> {
-    fn is_square(&self) -> bool {
-        self.width == self.height
-    }
+fn bar<T, K>(x: T, y: K) where T: Clone, K: Clone + Debug {
+    x.clone();
+    y.clone();
+    println!("{:?}", y);
 }
 
 fn main() {
-    let mut r = Rectangle {
-        x: 0,
-        y: 0,
-        width: 47,
-        height: 47,
-    };
-
-    assert!(r.is_square());
+    foo("Hello", "world");
+    bar("Hello", "world");
 }
