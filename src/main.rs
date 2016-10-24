@@ -1,10 +1,10 @@
 fn main() {
-    let mut m = 5;
+    let mut num = 5;
 
     {
-        let mut add_n = |x: i32| m += x;
-        add_n(5);
+        let mut add_num = move |x: i32| num += x;
+        add_num(5);
     }
 
-    assert_eq!(10, m);
+    assert_eq!(5, num);
 }
