@@ -1,10 +1,11 @@
 fn main() {
-    let mut num = 5;
+    fn call_with_one<F>(some_closure: F) -> i32
+    where F : Fn(i32) -> i32 {
 
-    {
-        let mut add_num = move |x: i32| num += x;
-        add_num(5);
+    some_closure(1)
     }
 
-    assert_eq!(5, num);
+    let answer = call_with_one(|x| x + 2);
+
+    assert_eq!(3, answer);
 }
