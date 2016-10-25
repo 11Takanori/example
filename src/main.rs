@@ -1,11 +1,11 @@
-fn double(x: i32) -> i32 {
-    x * 2
+fn change_truth(x: bool) -> bool {
+    !x
 }
 
 fn main() {
-    let a = 5;
+    let a = true;
 
-    let _y = double(a);
+    let _y = change_truth(a);
     println!("{}", a);
     println!("{}", _y);
 }
