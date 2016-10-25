@@ -1,6 +1,6 @@
 fn main() {
-    let a: String = "ABC".to_string();
-    let b: String = a.clone();  
+    let a: i32 = 42;
+    let b: i32 = a;
 
     println!("a={}, b={}", a, b);
 }
