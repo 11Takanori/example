@@ -1,23 +1,12 @@
+#[derive(Debug)]
+struct Foo<'a> {
+    x: &'a i32
+}
+
 fn main() {
-    trait Foo {
-         fn f(&self);
-    }
+    let _y = 5;
+    let y = &_y;
+    let f = Foo { x: y };
 
-    trait Bar {
-         fn f(&self);
-    }
-
-    struct Baz;
-
-    impl Foo for Baz {
-        fn f(&self) { println!("Baz's impl of Foo");}
-    }
-
-    impl Bar for Baz {
-        fn f(&self) { println!("Baz's impl of Bar");}
-    }
-
-    let b = Baz;
-    Foo::f(&b);
-    Bar::f(&b);
+    println!("{}", f.x);
 }
