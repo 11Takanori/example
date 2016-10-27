@@ -1,15 +1,22 @@
-#[derive(Debug)]
-struct Foo<'a> {
-    x: &'a i32,
+trait Foo {
+    fn foo()  -> i32;
 }
 
-impl <'a> Foo<'a> {
-    fn x(&self) -> &'a i32 { self.x }
+struct Bar;
+
+impl Bar {
+    fn foo() -> i32 {
+        20
+    }
+}
+
+impl Foo for Bar {
+    fn foo() -> i32 {
+        10
+    }
 }
 
 fn main() {
-    let y = &5;
-    let f = Foo { x: y };
-
-    println!("x is: {}", f.x());
+    assert_eq!(10, <Bar as Foo>::foo());
+    assert_eq!(20, Bar::foo());
 }
