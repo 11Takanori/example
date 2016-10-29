@@ -1,22 +1,12 @@
-trait Foo {
-    fn foo()  -> i32;
-}
+extern crate introduction;
 
-struct Bar;
-
-impl Bar {
-    fn foo() -> i32 {
-        20
-    }
-}
-
-impl Foo for Bar {
-    fn foo() -> i32 {
-        10
-    }
-}
+use introduction::english::{greetings,farewells};
+use introduction::japanese;
 
 fn main() {
-    assert_eq!(10, <Bar as Foo>::foo());
-    assert_eq!(20, Bar::foo());
+    println!("Hello in English: {}", greetings::hello());
+    println!("Goodbye in English: {}", farewells::goodbye());
+
+    println!("Hello in Japanese: {}", japanese::hello());
+    println!("Goodbye in Japanese: {}", japanese::goodbye());
 }
