@@ -1,6 +1,6 @@
 extern crate introduction;
 
-use introduction::english::{greetings,farewells};
+use introduction::english::*;
 use introduction::japanese;
 
 fn main() {
