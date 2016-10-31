@@ -3,7 +3,6 @@ extern crate introduction;
 use introduction::english::*;
 use introduction::japanese;
 use std::mem;
-use std::fmt;
 
 fn main() {
     println!("Hello in English: {}", greetings::hello());
@@ -21,9 +20,26 @@ fn main() {
 }
 
 trait Graph {
-    type N: fmt::Display;
+    type N;
     type E;
 
     fn has_edge(&self, &Self::N, &Self::N) -> bool;
     fn edges(&self, &Self::N) -> Vec<Self::E>;
+}
+
+struct Node;
+struct Edge;
+struct MyGraph;
+
+impl Graph for MyGraph {
+    type N = Node;
+    type E = Edge;
+
+    fn has_edge(&self, n1: &Node, n2: &Node) -> bool {
+        true
+    }
+
+    fn edges(&self, n: &Node) -> Vec<Edge> {
+        Vec::new()
+    }
 }
