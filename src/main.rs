@@ -30,7 +30,7 @@ fn two_words() -> (String, String) {
     (fello, rustaceans)
 }
 
-fn remove_vowels(name: String) -> String {
+fn remove_vowels(name: String) -> (String, String) {
     let mut output = String::new();
     for c in name.chars() {
         match c {
@@ -41,11 +41,11 @@ fn remove_vowels(name: String) -> String {
             }
         }
     }
-    output
+    (output, name)
 }
 
 fn print_out(name: String) {
-    let devowelized_name = remove_vowels(name.clone());
+    let (devowelized_name, name) = remove_vowels(name.clone());
     println!("Removing vowels yields {:?}", devowelized_name);
 
     println!("Removing vowels from {:?} yields {:?}",
