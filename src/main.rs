@@ -45,7 +45,7 @@ fn remove_vowels(name: String) -> (String, String) {
 }
 
 fn print_out(name: String) {
-    let (devowelized_name, name) = remove_vowels(name.clone());
+    let (devowelized_name, name) = remove_vowels(name);
     println!("Removing vowels yields {:?}", devowelized_name);
 
     println!("Removing vowels from {:?} yields {:?}",
