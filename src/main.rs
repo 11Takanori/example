@@ -21,13 +21,14 @@ fn main() {
     let (adjective, name) = two_words();
     let name = format!("{} {}", adjective, name);
     let mut string = format!("my friend");
+    let r = &mut string;
 
     print_out(name);
 
-    greet(&mut string);
-    greet(&mut string);   
+    greet(r);
+    greet(r);   
 
-    println!("Hello, {}!", string);
+    println!("Hello, {}!", r);
 }
 
 fn two_words() -> (String, String) {
