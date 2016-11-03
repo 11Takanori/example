@@ -20,7 +20,13 @@ fn main() {
 
     let (adjective, name) = two_words();
     let name = format!("{} {}", adjective, name);
+    let string = format!("my friend");
+
     print_out(name);
+    greet(&string);
+    greet(&string);
+
+    
 }
 
 fn two_words() -> (String, String) {
@@ -28,6 +34,10 @@ fn two_words() -> (String, String) {
     let rustaceans = format!("restaceans");
 
     (fello, rustaceans)
+}
+
+fn greet(name: &String) {
+    println!("Hello, {}!", name);
 }
 
 fn remove_vowels(name: String) -> (String, String) {
