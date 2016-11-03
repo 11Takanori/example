@@ -21,10 +21,11 @@ fn main() {
     let (adjective, name) = two_words();
     let name = format!("{} {}", adjective, name);
     let string = format!("my friend");
+    let r : &String = &string;
 
     print_out(name);
-    greet(&string);
-    greet(&string);
+    greet(r);
+    greet(r);
 
     
 }
