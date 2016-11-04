@@ -28,13 +28,17 @@ fn main() {
         greet(r);
         greet(r);
     }
-    
+
     println!("Hello, {}!", string);
+
+    let (mut str1, str2) = two_words();
+    join_words(&mut str1, &str2);
+    println!("concatenated string id {}", str1);
 }
 
 fn two_words() -> (String, String) {
-    let fello = format!("fello");
-    let rustaceans = format!("restaceans");
+    let fello = format!("fellow");
+    let rustaceans = format!("Rustaceans");
 
     (fello, rustaceans)
 }
@@ -63,6 +67,11 @@ fn print_out(name: String) {
 
     println!("Removing vowels from {:?} yields {:?}",
             name, devowelized_name);
+}
+
+fn join_words(prefix: &mut String, suffix: &str) {
+    prefix.push(' ');
+    prefix.push_str(suffix);
 }
 
 trait Graph {
