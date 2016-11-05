@@ -11,13 +11,6 @@ fn main() {
     println!("Hello in Japanese: {}", japanese::hello());
     println!("Goodbye in Japanese: {}", japanese::goodbye());
 
-    unsafe {
-        let a = [0u8, 0u8, 0u8, 0u8];
-        let b = mem::transmute::<[u8; 4], u32>(a);
-
-        println!("{}", b);
-    }
-
     let (adjective, name) = two_words();
     let name = format!("{} {}", adjective, name);
     let mut string = format!("my friend");
