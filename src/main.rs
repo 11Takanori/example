@@ -1,29 +1,20 @@
 use std::fmt;
 
 #[derive(Debug)]
-struct Structure(i32);
-
-#[derive(Debug)]
-struct Deep(Structure);
-
-impl fmt::Display for Structure {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.0)
-    }
+struct Point {
+    x: f64,
+    y: f64,
 }
 
-impl fmt::Display for Deep {
+impl fmt::Display for Point {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.0)
+        write!(f, "x: {}, y: {}", self.x, self.y)
     }
 }
 
 fn main() {
-    println!("{:?} months in a year.", 12);
-    println!("{1:?} {0:?} is the {actor:?} name.",
-             "Slater",
-             "Christian",
-             actor="actor's");
-    println!("Now {} will print!", Structure(3));
-    println!("Now {} will print!", Deep(Structure(7)));
+    let point = Point{ x: 1.2, y: 3.4 };
+
+    println!("Display: {}", point);
+    println!("Debug: {:?}", point);
 }
