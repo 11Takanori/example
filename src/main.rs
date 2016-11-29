@@ -1,11 +1,29 @@
+use std::fmt;
+
+#[derive(Debug)]
+struct Structure(i32);
+
+#[derive(Debug)]
+struct Deep(Structure);
+
+impl fmt::Display for Structure {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
+impl fmt::Display for Deep {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
 
 fn main() {
-    #[derive(Debug)]
-    struct Structure(i32);
-
-    let pi = format!("{:.*}", 3, 22 as f32 /7 as f32);
-
-    println!("This struct `{:?}` won't print...", Structure(3));
-    println!("My name is {0}, {1} {0}", "James","Bond");
-    println!("Pi is roughly {:?}", pi);
+    println!("{:?} months in a year.", 12);
+    println!("{1:?} {0:?} is the {actor:?} name.",
+             "Slater",
+             "Christian",
+             actor="actor's");
+    println!("Now {} will print!", Structure(3));
+    println!("Now {} will print!", Deep(Structure(7)));
 }
