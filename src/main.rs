@@ -1,4 +1,5 @@
 use std::fmt;
+use std::fmt::{Formatter, Display};
 
 #[derive(Debug)]
 struct Point {
@@ -14,6 +15,13 @@ struct Complex {
 
 #[derive(Debug)]
 struct List(Vec<i32>);
+
+#[derive(Debug)]
+struct Color {
+    red: u8,
+    green: u8,
+    blue: u8,
+}
 
 impl fmt::Display for Point {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -46,6 +54,12 @@ impl fmt::Display for List {
     }
 }
 
+impl Display for Color {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        write!(f, "RGB({}, {}, {})", self.red, self.green, self.blue)
+    }
+}
+
 fn main() {
     let p = Point{ x: 1.2, y: 3.4 };
     let c = Complex { real: 3.3, imag: 7.2 };
@@ -59,4 +73,12 @@ fn main() {
 
     println!("Display: {}", v);
     println!("Debug: {:?}", v);
+
+    for color in [
+        Color { red: 128, green: 255, blue: 90},
+        Color { red: 0, green: 3, blue: 254 },
+        Color { red: 0, green: 0, blue: 0 },
+    ].iter() {
+        println!("{}", *color);
+    }
 }
