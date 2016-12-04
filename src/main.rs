@@ -70,6 +70,12 @@ impl Display for Matrix {
     }
 }
 
+fn transpose(pair: Matrix) -> Matrix {
+    let Matrix(t1, t2, t3, t4) = pair;
+
+    Matrix(t1, t3, t2, t4)
+}
+
 fn main() {
     let p = Point{ x: 1.2, y: 3.4 };
     let c = Complex { real: 3.3, imag: 7.2 };
@@ -93,5 +99,6 @@ fn main() {
         println!("{}", *color);
     }
 
-    println!("{}", matrix);
+    println!("Matrix:\n{}", matrix);
+    println!("Transpose:\n{}", transpose(matrix));
 }
