@@ -23,6 +23,9 @@ struct Color {
     blue: u8,
 }
 
+#[derive(Debug)]
+struct Matrix(f32, f32, f32, f32);
+
 impl fmt::Display for Point {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "x: {}, y: {}", self.x, self.y)
@@ -61,10 +64,17 @@ impl Display for Color {
     }
 }
 
+impl Display for Matrix {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        write!(f, "({} {})\n({} {})", self.0, self.1, self.2, self.3)
+    }
+}
+
 fn main() {
     let p = Point{ x: 1.2, y: 3.4 };
     let c = Complex { real: 3.3, imag: 7.2 };
     let v = List(vec![1, 2, 3]);
+    let matrix = Matrix(1.1, 1.2, 2.1, 2.2);
 
     println!("Display: {}", p);
     println!("Debug: {:?}", p);
@@ -82,4 +92,6 @@ fn main() {
     ].iter() {
         println!("{}", *color);
     }
+
+    println!("{}", matrix);
 }
