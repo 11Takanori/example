@@ -1,5 +1,6 @@
 use std::fmt;
 use std::fmt::{Formatter, Display};
+use List2::*;
 
 #[derive(Debug)]
 struct Point {
@@ -25,6 +26,12 @@ struct Color {
 
 #[derive(Debug)]
 struct Matrix(f32, f32, f32, f32);
+
+#[derive(Debug)]
+enum List2 {
+    Cons(u32, Box<List2>),
+    Nil,
+}
 
 impl fmt::Display for Point {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -70,6 +77,34 @@ impl Display for Matrix {
     }
 }
 
+impl List2 {
+    fn new() -> List2 {
+        Nil
+    }
+
+    fn prepend(self, elem: u32) -> List2 {
+        Cons(elem, Box::new(self))
+    }
+
+    fn len(&self) -> u32 {
+        match *self {
+            Cons(_, ref tail) => 1 + tail.len(),
+            Nil => 0,
+        }
+    }
+
+    fn stringify(&self) -> String {
+        match *self {
+            Cons(head, ref tail) => {
+                format!("{}, {}", head, tail.stringify())
+            },
+            Nil => {
+                format!("Nil")
+            },
+        }
+    }
+}
+
 fn transpose(pair: Matrix) -> Matrix {
     let Matrix(t1, t2, t3, t4) = pair;
 
@@ -81,6 +116,7 @@ fn main() {
     let c = Complex { real: 3.3, imag: 7.2 };
     let v = List(vec![1, 2, 3]);
     let matrix = Matrix(1.1, 1.2, 2.1, 2.2);
+    let mut list = List2::new();
 
     println!("Display: {}", p);
     println!("Debug: {:?}", p);
@@ -101,4 +137,11 @@ fn main() {
 
     println!("Matrix:\n{}", matrix);
     println!("Transpose:\n{}", transpose(matrix));
+
+    list = list.prepend(1);
+    list = list.prepend(2);
+    list = list.prepend(3);
+
+    println!("linked list has length: {}", list.len());
+    println!("{}",  list.stringify());
 }
