@@ -33,6 +33,19 @@ enum List2 {
     Nil,
 }
 
+#[allow(dead_code)]
+#[derive(Debug)]
+enum Color2 {
+    Red,
+    Blue,
+    Green,
+    RGB(u32, u32, u32),
+    HSV(u32, u32, u32),
+    HSL(u32, u32, u32),
+    CMY(u32, u32, u32),
+    CMYK(u32, u32, u32, u32),
+}
+
 impl fmt::Display for Point {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "x: {}, y: {}", self.x, self.y)
@@ -117,6 +130,7 @@ fn main() {
     let v = List(vec![1, 2, 3]);
     let matrix = Matrix(1.1, 1.2, 2.1, 2.2);
     let mut list = List2::new();
+    let color = Color2::RGB(122, 17, 40);
 
     println!("Display: {}", p);
     println!("Debug: {:?}", p);
@@ -144,4 +158,21 @@ fn main() {
 
     println!("linked list has length: {}", list.len());
     println!("{}",  list.stringify());
+
+    match color {
+        Color2::Red   => println!("The color is Red!"),
+        Color2::Blue  => println!("The color is Blue!"),
+        Color2::Green => println!("The color is Green!"),
+        Color2::RGB(r, g, b) =>
+            println!("Red: {}, green: {}, and blue: {}!", r, g, b),
+        Color2::HSV(h, s, v) =>
+            println!("Hue: {}, saturation: {}, value: {}!", h, s, v),
+        Color2::HSL(h, s, l) =>
+            println!("Hue: {}, saturation: {}, lightness: {}!", h, s, l),
+        Color2::CMY(c, m, y) =>
+            println!("Cyan: {}, magenta: {}, yello: {}!", c, m, y),
+        Color2::CMYK(c, m, y, k) =>
+            println!("Cyan: {}, magenta: {}, yello: {}, key (black): {}!",
+                c, m, y, k),
+    }
 }
