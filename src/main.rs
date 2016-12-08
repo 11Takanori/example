@@ -209,4 +209,16 @@ fn main() {
         n @ 13 ... 19 => println!("I'm a teen of age {:?}", n),
         n             => println!("I'm an old person of age {:?}", n),
     }
+
+    let mut optional = Some(0);
+
+    while let Some(i) = optional {
+        if i > 9 {
+            println!("Greater tham 9, quit!");
+            optional = None;
+        } else {
+            println!("`i` is `{:?}`. Try again.", i);
+            optional = Some(i + 1);
+        }
+    }
 }
