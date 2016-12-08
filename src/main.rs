@@ -124,6 +124,10 @@ fn transpose(pair: Matrix) -> Matrix {
     Matrix(t1, t3, t2, t4)
 }
 
+fn age() -> u32 {
+    15
+}
+
 fn main() {
     let p = Point{ x: 1.2, y: 3.4 };
     let c = Complex { real: 3.3, imag: 7.2 };
@@ -174,5 +178,35 @@ fn main() {
         Color2::CMYK(c, m, y, k) =>
             println!("Cyan: {}, magenta: {}, yello: {}, key (black): {}!",
                 c, m, y, k),
+    }
+
+    let reference = &4;
+    let value = 5;
+    let mut mut_value = 6;
+
+    match reference {
+        &val => println!("Got a value via destructuring: {:?}", val),
+    }
+
+    match *reference {
+        val => println!("Got a value via dereferencing: {:?}", val),
+    }
+
+    match value {
+        ref f => println!("Got a reference to a value: {:?}", f),
+    }
+
+    match mut_value {
+        ref mut m => {
+            *m += 10;
+            println!("We added 10. `mut_value`: {:?}", m);
+        }
+    }
+
+    match age() {
+        0             => println!("I'm not born yet I guess"),
+        n @ 1 ... 12  => println!("I'm a child of age {:?}", n),
+        n @ 13 ... 19 => println!("I'm a teen of age {:?}", n),
+        n             => println!("I'm an old person of age {:?}", n),
     }
 }
