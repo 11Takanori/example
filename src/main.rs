@@ -52,6 +52,8 @@ struct Rectangle {
     p2 :Point,
 }
 
+struct Pair(Box<i32>, Box<i32>);
+
 impl Point {
     fn origin() -> Point {
         Point { x: 0.0, y: 0.0 }
@@ -83,6 +85,14 @@ impl Rectangle {
 
         self.p1.y += y;
         self.p2.y += y;
+    }
+}
+
+impl Pair {
+    fn destroy(self) {
+        let Pair(first, second) = self;
+
+        println!("Destroying Pair({}, {})", first, second);
     }
 }
 
@@ -276,4 +286,7 @@ fn main() {
     };
 
     square.translate(1.0, 1.0);
+
+    let pair = Pair(Box::new(1), Box::new(2));
+    pair.destroy();
 }
