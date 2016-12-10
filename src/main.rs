@@ -1,6 +1,7 @@
 use std::fmt;
 use std::fmt::{Formatter, Display};
 use List2::*;
+use std::mem;
 
 #[derive(Debug)]
 struct Point {
@@ -289,4 +290,21 @@ fn main() {
 
     let pair = Pair(Box::new(1), Box::new(2));
     pair.destroy();
-}
+
+    let mut count = 0;
+    let mut inc = || {
+        count += 1;
+        println!("`count`: {}", count);
+    };
+
+    inc();
+    inc();
+
+    let movable = Box::new(3);
+    let consume = || {
+        println!("`movable`: {:?}", movable);
+        mem::drop(movable);
+    };
+
+    consume();
+ }
