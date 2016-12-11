@@ -8,6 +8,14 @@ fn apply_to_3<F>(f: F) -> i32 where
     f(3)
 }
 
+fn call_function<F: Fn()>(f: F) {
+    f()
+}
+
+fn print() {
+    println!("I'm a function!")
+}
+
 fn main() {
     use std::mem;
 
@@ -26,6 +34,9 @@ fn main() {
     apply(diary);
 
     let double = |x| 2 * x;
-
     println!("3 doubled: {}", apply_to_3(double));
+
+    let closure = || println!("I'm a closure!");
+    call_function(closure);
+    call_function(print);
 }
