@@ -9,7 +9,19 @@ struct People {
 }
 
 fn main() {
-    use csv::{Writer,Reader};
+    // use csv::{Writer,Reader};
+
+    let people = vec![
+        ("Yamada", "Taro", 1989),
+        ("Sato", "Takashi", 1990),
+        ("Suzuki", "Emi", 1991),
+    ];
+    // let path = "sample.csv";
+    let mut writer = csv::Writer::from_file("sample.csv").unwrap();
+
+    // for row in people {
+    //     writer.encode(row).expect("CSV writer error");
+    // }
 
     let people = People {
         last_name: "Takahashi".to_owned(),
@@ -19,4 +31,6 @@ fn main() {
 
     writer.encode(people).expect("CSV writer error");
     writer.flush().expect("Flush error");
+
+
 }
