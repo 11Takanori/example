@@ -1,23 +1,22 @@
 extern crate csv;
+extern crate rustc_serialize;
+
+#[derive(RustcDecodable, RustcEncodable)]
+struct People {
+    last_name: String,
+    first_name: String,
+    year: usize,
+}
 
 fn main() {
-    use csv::{Writer, Reader};
+    use csv::{Writer,Reader};
 
-    // let people = vec![
-    //     ("Yamada", "Taro", 1989),
-    //     ("Sato", "Takashi", 1990),
-    //     ("Suzuki", "Emi", 1991),
-    // ];
-    // let path = "sample.csv";
-    // let mut writer = Writer::from_file(path).unwrap();
+    let people = People {
+        last_name: "Takahashi".to_owned(),
+        first_name: "Hanako".to_owned(),
+        year: 1992,
+    };
 
-    // for row in people {
-    //     writer.encode(row).expect("CSV writer error");
-    // }
-
-    let mut reader = Reader::from_file("sample.csv").unwrap().has_headers(false);
-    for row in reader.decode() {
-        let row: (String, String, usize) = row.unwrap();
-        println!("{:?}", row);
-    }
+    writer.encode(people).expect("CSV writer error");
+    writer.flush().expect("Flush error");
 }
