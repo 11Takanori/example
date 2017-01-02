@@ -1,5 +1,6 @@
 extern crate csv;
 extern crate rustc_serialize;
+extern crate hyper;
 
 #[derive(RustcEncodable)]
 struct People {
