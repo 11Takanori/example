@@ -49,4 +49,13 @@ fn main() {
              } else {
                  "don't like"
              });
+    assert!(decoded.avatar.is_none());
+    let new_request = "{\"id\":64,\"title\":\"24days\",\"stats\":{\"pageviews\":1500}}";
+    if let Ok(request_json) = json::Json::from_str(new_request) {
+        if let Some(stats) = request_json.find("stats") {
+            if let Some(pageviews) = stats.find("pageviews") {
+                println!("Pageviews: {}", pageviews);
+            }
+        }
+    }
 }
