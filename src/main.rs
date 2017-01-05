@@ -47,7 +47,6 @@ struct Movie {
 }
 
 fn main() {
-    println!("{:?}", get_content("http://httpbin.org/status/200"));
     let query = vec![("key", "value"), ("foo", "bar")];
     println!("{}", post_query("http://httpbin.org/post", query).unwrap());
     let movie = Movie {
