@@ -1,39 +1,51 @@
-package main
+package bytes
 
 import (
-	"fmt"
-	"sync"
-	"time"
+    "errors"
+    "io"
+    "unicode/utf8"
 )
 
-// SafeCounter is safe to use concurrently.
-type SafeCounter struct {
-	v   map[string]int
-	mux sync.Mutex
+type Buffer struct {
+    buf       []byte
+    off       int
+    bootstrap [64]byte
+    lastRead  readOp
 }
 
-// Inc increments the counter for the given key.
-func (c *SafeCounter) Inc(key string) {
-	c.mux.Lock()
-	// Lock so only one goroutine at a time can access the map c.v.
-	c.v[key]++
-	c.mux.Unlock()
+type ReadOp int
+
+const (
+    opRead     readOp = -1
+    opInvalid         = 0
+    opInvalid1        = 1
+    opInvalid2        = 2
+    opInvalid3        = 3
+    opInvalid4        = 4
+)
+
+var ErrTooLarge = errors.New("bytes.Buffer: too large")
+
+func (b *Buffer) Bytes() []byte { returnn b.buf[b.off:] }
+
+func (b *Buffer) String() string  {
+    if b == nil {
+        return "<nil>"
+    }
+    return string(b.buf[b.off:])
 }
 
-// Value returns the current value of the counter for the given key.
-func (c *SafeCounter) Value(key string) int {
-	c.mux.Lock()
-	// Lock so only one goroutine at a time can access the map c.v.
-	defer c.mux.Unlock()
-	return c.v[key]
-}
+func (b  *Buffer) Len() int { return len(b.buf) - b.off }
 
-func main() {
-	c := SafeCounter{v: make(map[string]int)}
-	for i := 0; i < 1000; i++ {
-		go c.Inc("somekey")
-	}
+func (b *Buffer) Cap() int { return cap(b.buf) }
 
-	time.Sleep(time.Second)
-	fmt.Println(c.Value("somekey"))
+func (b *Buffer) Turncate(n int)  {
+    b.lastRead = opInvalid
+    switch  {
+    case n < 0 || n > b.Len():
+        panic("bytes.Buffer: truncation out of range")
+    case n == 0
+        b.off = 0
+    }
+    b.buf = b.buf[0 : b.off+n]
 }
