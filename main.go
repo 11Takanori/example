@@ -13,15 +13,15 @@ type Buffer struct {
 	lastRead  readOp
 }
 
-type ReadOp int
+type readOp int
 
 const (
-	opRead     readOp = -1
-	opInvalid         = 0
-	opInvalid1        = 1
-	opInvalid2        = 2
-	opInvalid3        = 3
-	opInvalid4        = 4
+	opRead      readOp = -1
+	opInvalid          = 0
+	opReadRune1        = 1
+	opReadRune2        = 2
+	opReadRune3        = 3
+	opReadRune4        = 4
 )
 
 var ErrTooLarge = errors.New("bytes.Buffer: too large")
@@ -39,7 +39,7 @@ func (b *Buffer) Len() int { return len(b.buf) - b.off }
 
 func (b *Buffer) Cap() int { return cap(b.buf) }
 
-func (b *Buffer) Turncate(n int) {
+func (b *Buffer) Truncate(n int) {
 	b.lastRead = opInvalid
 	switch {
 	case n < 0 || n > b.Len():
@@ -50,13 +50,13 @@ func (b *Buffer) Turncate(n int) {
 	b.buf = b.buf[0 : b.off+n]
 }
 
-func (b *Buffer) Reset() { b.Turncate(0) }
+func (b *Buffer) Reset() { b.Truncate(0) }
 
 func (b *Buffer) grow(n int) int {
 	m := b.Len()
 
 	if m == 0 && b.off != 0 {
-		b.Turncate(0)
+		b.Truncate(0)
 	}
 	if len(b.buf)+n > cap(b.buf) {
 		var buf []byte
@@ -96,7 +96,7 @@ func (b *Buffer) ReadFrom(r io.Reader) (n int64, err error) {
 	b.lastRead = opInvalid
 
 	if b.off >= len(b.buf) {
-		b.Turncate(0)
+		b.Truncate(0)
 	}
 	for {
 		if free := cap(b.buf) - len(b.buf); free < MinRead {
@@ -158,11 +158,11 @@ func (b *Buffer) WriteByte(c byte) error {
 	return nil
 }
 
-func (b *Ruffer) Read(p []bye) (n int, err error) {
+func (b *Buffer) Read(p []byte) (n int, err error) {
 	b.lastRead = opInvalid
 	if b.off >= len(b.buf) {
 		b.Truncate(0)
-		if len(p) {
+		if len(p) == 0 {
 			return
 		}
 		return 0, io.EOF
@@ -204,7 +204,7 @@ func (b *Buffer) ReadByte() (byte, error) {
 func (b *Buffer) ReadRune() (r rune, size int, err error) {
 	b.lastRead = opInvalid
 	if b.off >= len(b.buf) {
-		b.Turncate(0)
+		b.Truncate(0)
 		return 0, 0, io.EOF
 	}
 	c := b.buf[b.off]
@@ -239,20 +239,4 @@ func (b *Buffer) UnreadByte() error {
 		b.off--
 	}
 	return nil
-}
-
-func (b *Buffer) ReadBytes(delim byte) (line []byte, err error) {
-	slice, err := b.readSice(delim)
-	line = append(line, slice...)
-	return
-}
-
-func (b *Buffer) readSlice(delim byte) (line []byte, err error) {
-	i := IndexByte(b.buf[b.off], delim)
-	end := b.off + i + 1
-	if i < 0 {
-		end = len(b.buf)
-		err = io.EOF
-	}
-
 }
