@@ -53,6 +53,8 @@ func (p IntSlice) Len() int           { return len(p) }
 func (p IntSlice) Less(i, j int) bool { return p[i] < p[j] }
 func (p IntSlice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 
+func (p IntSlice) Sort() { Sort(p) }
+
 func quickSort(data Interface, a, b, maxDepth int) {
 	for b-a > 12 {
 		if maxDepth == 0 {
