@@ -55,6 +55,76 @@ func (p IntSlice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 
 func (p IntSlice) Sort() { Sort(p) }
 
+func medianOfTree(data Interface, m1, m0, m2 int) {
+	if data.Less(m1, m0) {
+		data.Swap(m1, m0)
+	}
+	if data.Less(m2, m1) {
+		data.Swap(m2, m1)
+		if data.Less(m1, m0) {
+			data.Swap(m1, m0)
+		}
+	}
+}
+
+func doPivot(data Interface, lo, hi int) (midlo, midhi int) {
+	m := lo + (hi-lo)/2
+	if hi-lo > 40 {
+		s := (hi - lo) / 8
+		medianOfTree(data, lo, lo+s, lo+2*s)
+		medianOfTree(data, m, m-s, m+s)
+		medianOfTree(data, hi-1, hi-1-s, hi-1-2*s)
+	}
+	medianOfTree(data, lo, m, hi-1)
+
+	pivot := lo
+	a, c := lo+1, hi-1
+
+	b := a
+	for {
+		for ; b < c && !data.Less(pivot, b); b++ {
+		}
+		for ; b < c && data.Less(pivot, c-1); c-- {
+		}
+		if b >= c {
+			break
+		}
+		data.Swap(b, c-1)
+		b++
+		c--
+	}
+	protect := hi-c < 5
+	if !protect && hi-c < (hi-lo)/4 {
+		dups := 0
+		if !data.Less(pivot, hi-1) {
+			data.Swap(c, hi-1)
+			c++
+			dups++
+		}
+		if !data.Less(b-1, pivot) {
+			b--
+			dups++
+		}
+		protect = dups > 1
+	}
+	if protect {
+		for {
+			for ; a < b && !data.Less(b-1, pivot); b-- {
+			}
+			for ; a < b && data.Less(a, pivot); a++ {
+			}
+			if a >= b {
+				break
+			}
+			data.Swap(a, b-1)
+			a++
+			b--
+		}
+	}
+	data.Swap(pivot, b-1)
+	return b - 1, c
+}
+
 func quickSort(data Interface, a, b, maxDepth int) {
 	for b-a > 12 {
 		if maxDepth == 0 {
