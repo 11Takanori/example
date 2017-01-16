@@ -1,9 +1,5 @@
 package sort
 
-import (
-	"reflect"
-)
-
 type Interface interface {
 	Len() int
 	Less(i, j int) bool
@@ -172,17 +168,4 @@ func maxDepth(n int) int {
 type lessSwap struct {
 	Less func(i, j int) bool
 	Swap func(i, j int)
-}
-
-func Slice(slice interface{}, less func(i, j int) bool) {
-	rv := reflect.ValueOf(slice)
-	swap := reflect.Swapper(slice)
-	length := rv.Len()
-	quickSort_func(lessSwap{less, swap}, 0, length, maxDepth(length))
-}
-
-func SliceStable(slice interface{}, less func(i, j int) bool) {
-	rv := reflect.ValueOf(slice)
-	swap := reflect.Swapper(slice)
-	stable_func(lessSwap{less, swap}, rv.Len())
 }
