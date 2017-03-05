@@ -1,30 +1,35 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+int maxof(const int a[], int n)
+{
+    int i;
+    int max = a[0];
+
+    for (i = 1; i < n; i++)
+        if (a[i] > max) max = a[i];
+    return max;
+}
+
 int main(void)
 {
     int i;
-    int *a;
-    int na;
+    int *height;
+    int number;
 
-    printf("要素数 ");
-    scanf("%d", &na);
+    printf("人数：");
+    scanf("%d", &number);
 
-    a = calloc(na, sizeof(int));
+    height = calloc(number, sizeof(int));
 
-    if (a == NULL)
-        puts("記憶域の確保に失敗しました。");
-    else {
-        printf("%d個の整数を入力してください。 \n", na);
-        for (i = 0; i < na; i++) {
-            printf("a[%d] :", i);
-            scanf("%d", &a[i]);
-        }
-
-        printf("各要素の値は以下のとおりです。 \n");
-        for (i = 0; i < na; i++)
-            printf("a[%d] = %d\n", i, a[i]);
-        free(a);
+    printf("%d人の身長を入力してください。 \n", number);
+    for (i = 0; i < number; i++) {
+        printf("height[%d] : ", i);
+        scanf("%d", &height[i]);
     }
+
+    printf("max is %d \n", maxof(height, number));
+    free(height);
+
     return 0;
 }
