@@ -21,10 +21,21 @@ int max4(int a, int b, int c, int d)
     return max;
 }
 
+int min3(int a, int b, int c)
+{
+    int min = a;
+
+    if (b < min) min = b;
+    if (c < min) min = c;
+
+    return min;
+}
+
 int main(void)
 {
     printf("max3(%d,%d,%d) = %d\n", 2, 1, 3, max3(2, 1, 3));
     printf("max4(%d,%d,%d,%d) = %d\n", 2, 4, 1, 3, max4(2, 4, 1, 3));
+    printf("min3(%d,%d,%d) = %d\n", 2, 1, 3, min3(2, 1, 3));
 
     return 0;
 }
