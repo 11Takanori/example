@@ -1,3 +1,4 @@
+#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -8,6 +9,7 @@ int maxof(const int a[], int n)
 
     for (i = 1; i < n; i++)
         if (a[i] > max) max = a[i];
+
     return max;
 }
 
@@ -17,19 +19,18 @@ int main(void)
     int *height;
     int number;
 
-    printf("人数：");
+    printf("people : ");
     scanf("%d", &number);
 
     height = calloc(number, sizeof(int));
 
-    printf("%d人の身長を入力してください。 \n", number);
+    srand(time(NULL));
     for (i = 0; i < number; i++) {
-        printf("height[%d] : ", i);
-        scanf("%d", &height[i]);
+        height[i] = 100 + rand() % 90;
+        printf("height[%d] = %d\n", i, height[i]);
     }
 
-    printf("max is %d \n", maxof(height, number));
+    printf("Max is %d \n", maxof(height, number));
     free(height);
-
     return 0;
 }
