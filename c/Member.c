@@ -1,25 +1,33 @@
-#ifndef ___Member
-#define ___Member
+#include <stdio.h>
+#include <string.h>
+#include "Member.h"
 
-typedef struct {
-    int  no;
-    char name[20];
-} Member;
+int MemberNoCmp(const Member *x, const Member *y)
+{
+    return x->no < y->no ? -1 : x->no > y->no ? 1 : 0;
+}
 
-#define MEMBER_NO
-#define MEMBER_NAME
+int MemberNameCmp(const Member *x, const Member *y)
+{
+    return strcmp(x->name, y->name);
+}
 
-int MemberCmp(const Member *x, const Member *y);
+void PrintMember(const Member *x)
+{
+    printf("%d %s", x->no, x->name);
+}
 
-int MemberNameCmp(const Member *x, const Member *y);
+void PrintLnMember(const Member *x)
+{
+    printf("%d %s\n", x->no, x->name);
+}
 
-void PrintMember(const Member *x);
+Member ScanMember(const char *message, int sw)
+{
+    Member temp;
+    printf("%sするデータを入力してください。 \n", message);
+    if (sw & MEMBER_NO)   { printf("番号："); scanf("%d", &temp.no); }
+    if (sw & MEMBER_NAME) { printf("名前："); scanf("%s", temp.name); }
 
-void PrintLnMember(const Member *x);
-
-Member ScanMember(const char *message, int sw);
-
-#endif
-
-
-
+    return temp;
+}
