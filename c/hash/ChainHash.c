@@ -3,7 +3,7 @@
 #include "Member.h"
 #include "ChainHash.h"
 
-static in hash(int key, int size)
+static int hash(int key, int size)
 {
     return key % size;
 }
@@ -25,4 +25,17 @@ int Initialize(ChainHash *h, int size)
     for (i = 0; i < size; i++)
         h->table[i] = NULL;
     return 1;
+}
+
+Node *Search(const ChainHash *h, const Member *x)
+{
+    int key = hash(x->no, h->size);
+    Node *p = h->table[key];
+
+    while (p != NULL) {
+        if (p->data.no == x->no)
+            return p;
+        p = p->next;
+    }
+    return NULL:
 }
