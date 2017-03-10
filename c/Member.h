@@ -20,6 +20,3 @@ void PrintLnMember(const Member *x);
 Member ScanMember(const char *message, int sw);
 
 #endif
-
-
-
