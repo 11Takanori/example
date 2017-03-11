@@ -76,3 +76,17 @@ int Remove(ChainHash *h, const Member *x)
     }
     return 1;
 }
+
+void Dump(const ChainHash *h)
+{
+    int i;
+    for (i = 0; i < h->size; i++) {
+        Node *p = h->table[i];
+        printf("%02d ", i);
+        while (p != NULL) {
+            printf("-> %d (%s) ", p->data.no, p->data.name);
+            p = p->next;
+        }
+        putchar('\n');
+    }
+}
