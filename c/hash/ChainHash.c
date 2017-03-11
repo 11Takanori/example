@@ -58,3 +58,21 @@ int Add(ChainHash *h, const Member *x)
 
     return 0;
 }
+
+int Remove(ChainHash *h, const Member *x)
+{
+    int key = hash(x->no, h->size);
+    Node *p = h->table[key];
+    Node **pp = &h->table[key];
+
+    while (p != NULL) {
+        if (p->data.no == x->no) {
+            *pp = p->next;
+            free(p);
+            return 0;
+        }
+        pp = &p->next;
+        p = p->next;
+    }
+    return 1;
+}
