@@ -46,3 +46,22 @@ Bucket *Search(const ClosedHash *h, const Member *x)
     }
     return NULL;
 }
+
+int Add(ClosedHash *h, const Member *x)
+{
+    int i;
+    int key = hash(x->no, h->size);
+    Bucket *p = &h->table[key];
+
+    if (Search(h, x))
+        return 1;
+    for (i = 0; i < h->size; i++) {
+        if (p->stat == Empty || p->stat == Deleted) {
+            SetBucket(p, x, Occupied);
+            return 0;
+        }
+        key = rehash(key, h->size);
+        p = &h->table[key];
+    }
+    return 2;
+}
