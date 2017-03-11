@@ -31,3 +31,18 @@ int Initialize(ClosedHash *h, int size)
         h->table[i].stat = Empty;
     return 1;
 }
+
+Bucket *Search(const ClosedHash *h, const Member *x)
+{
+    int i;
+    int key = hash(x->no, h->size);
+    Bucket *p = &h->table[key];
+
+    for (i = 0; p->stat != Empty && i < h->size; i++) {
+        if (p->stat == Occupied && p->data.no == x->no)
+            return p;
+        key = rehash(key, h->size);
+        p = &h->table[key];
+    }
+    return NULL;
+}
