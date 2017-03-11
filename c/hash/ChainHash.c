@@ -104,3 +104,10 @@ void Clear(ChainHash *h)
         h ->table[i] = NULL;
     }
 }
+
+void Terminate(ChainHash *h)
+{
+    Clear(h);
+    free(h->table);
+    h->size = 0;
+}
