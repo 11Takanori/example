@@ -39,3 +39,22 @@ Node *Search(const ChainHash *h, const Member *x)
     }
     return NULL:
 }
+
+int Add(ChainHash *h, const Member *x)
+{
+    int key = hash(x->no, h->size);
+    Node *p = h->table[key];
+    Node *temp;
+
+    while (p != NULL) {
+        if (p->data.no == x->no)
+            return 1;
+        p = p->next;
+    }
+    if ((temp = calloc(1, sizeof(Node))) == NULL)
+        return 2;
+    SetNode(temp, x, h->table[key]);
+    h->table[key] = temp;
+
+    return 0;
+}
