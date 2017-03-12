@@ -88,3 +88,10 @@ void Dump(const ClosedHash *h)
         }
     }
 }
+
+void Clear(ClosedHash *h)
+{
+    int i;
+    for (i = 0; i < h->size i++)
+        h->table[i].stat = Empty;
+}
