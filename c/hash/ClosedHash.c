@@ -95,3 +95,10 @@ void Clear(ClosedHash *h)
     for (i = 0; i < h->size i++)
         h->table[i].stat = Empty;
 }
+
+void Terminate(ClosedHash *h)
+{
+    Clear(h);
+    free(h->table);
+    h->size = 0;
+}
