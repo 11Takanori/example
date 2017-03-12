@@ -1,1 +1,1 @@
-# introduction_to_rust
+# For studying
