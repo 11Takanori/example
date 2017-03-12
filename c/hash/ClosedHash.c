@@ -65,3 +65,26 @@ int Add(ClosedHash *h, const Member *x)
     }
     return 2;
 }
+
+int Remove(ClosedHash *h, const Member *x)
+{
+    Bucket *p = Search(h, x);
+    if (p == NULL)
+        return 1;
+    p->stat = Deleted;
+    return 0;
+}
+
+void Dump(const ClosedHash *h)
+{
+    int i;
+    for (i = 0; i < h->size; i++) {
+        printf("%02d : ", i);
+        switch (h->table[i].stat) {
+            case Occupied : printf("%d (%s)\n",
+                    h->table[i].data.no, h->table[i].data.name);
+            case Empty : printf("-- 未登録 --\n"); break;
+            case Deleted : printf("-- 削除済 --\n"); break;
+        }
+    }
+}
