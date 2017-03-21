@@ -3,14 +3,13 @@ package main
 import "fmt"
 
 func bubble(a []int) {
-	for i := range a {
-		for j := 0; j > i; j++ {
-			if a[j] > a[j+1] {
-				a[j], a[j+1] = a[j+1], a[j]
+	for i := 0; i < len(a)-1; i++ {
+		for j := len(a) - 1; j > i; j-- {
+			if a[j-1] > a[j] {
+				a[j-1], a[j] = a[j], a[j-1]
 			}
 		}
 	}
-	fmt.Println(a)
 }
 
 func main() {
@@ -26,4 +25,5 @@ func main() {
 	}
 
 	bubble(a)
+	fmt.Printf("%v\n", a)
 }
