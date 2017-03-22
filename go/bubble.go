@@ -12,6 +12,21 @@ func bubble1(a []int) {
 	}
 }
 
+func bubble2(a []int) {
+	for i := 0; i < len(a)-1; i++ {
+		exchg := 0
+		for j := len(a) - 1; j > i; j-- {
+			if a[j-1] > a[j] {
+				a[j-1], a[j] = a[j], a[j-1]
+				exchg++
+			}
+			if exchg == 0 {
+				break
+			}
+		}
+	}
+}
+
 func main() {
 	var n int
 
@@ -24,6 +39,6 @@ func main() {
 		fmt.Scanf("%d", &a[i])
 	}
 
-	bubble1(a)
+	bubble2(a)
 	fmt.Printf("%v\n", a)
 }
