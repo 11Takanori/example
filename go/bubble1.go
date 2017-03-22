@@ -4,7 +4,7 @@ import "fmt"
 
 func bubble(a []int) {
 	for i := 0; i < len(a)-1; i++ {
-		for j := len(a) - 1; j > i; j-- {
+		for j := len(a)-1; j > i; j-- {
 			if a[j-1] > a[j] {
 				a[j-1], a[j] = a[j], a[j-1]
 			}
