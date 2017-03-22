@@ -2,9 +2,9 @@ package main
 
 import "fmt"
 
-func bubble(a []int) {
+func bubble1(a []int) {
 	for i := 0; i < len(a)-1; i++ {
-		for j := len(a)-1; j > i; j-- {
+		for j := len(a) - 1; j > i; j-- {
 			if a[j-1] > a[j] {
 				a[j-1], a[j] = a[j], a[j-1]
 			}
@@ -24,6 +24,6 @@ func main() {
 		fmt.Scanf("%d", &a[i])
 	}
 
-	bubble(a)
+	bubble1(a)
 	fmt.Printf("%v\n", a)
 }
