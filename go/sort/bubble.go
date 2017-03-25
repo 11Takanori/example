@@ -40,6 +40,17 @@ func bubble3(a []int) {
 	}
 }
 
+func insertion(a []int) {
+	for i := 1; i < len(a); i++ {
+		tmp := a[i]
+		var j int
+		for j = i; j > 0 && a[j-1] > tmp; j-- {
+			a[j] = a[j-1]
+		}
+		a[j] = tmp
+	}
+}
+
 func main() {
 	var n int
 
@@ -52,6 +63,6 @@ func main() {
 		fmt.Scanf("%d", &a[i])
 	}
 
-	bubble3(a)
+	insertion(a)
 	fmt.Printf("%v\n", a)
 }
