@@ -51,6 +51,18 @@ func insertion(a []int) {
 	}
 }
 
+func selection(a []int) {
+	for i := 0; i < len(a)-1; i++ {
+		min := i
+		for j := i + 1; j < len(a); j++ {
+			if a[j] < a[min] {
+				min = j
+			}
+		}
+		a[i], a[min] = a[min], a[i]
+	}
+}
+
 func main() {
 	var n int
 
@@ -63,6 +75,6 @@ func main() {
 		fmt.Scanf("%d", &a[i])
 	}
 
-	insertion(a)
+	selection(a)
 	fmt.Printf("%v\n", a)
 }
