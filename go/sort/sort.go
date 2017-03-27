@@ -63,6 +63,35 @@ func selection(a []int) {
 	}
 }
 
+func quick(a []int, left, right int) {
+	pl := left
+	pr := right
+	x := a[(pl+pr)/2]
+
+	for {
+		for a[pl] < x {
+			pl++
+		}
+		for a[pr] > x {
+			pr--
+		}
+		if pl <= pr {
+			a[pl], a[pr] = a[pr], a[pl]
+			pl++
+			pr--
+		}
+		if pl > pr {
+			break
+		}
+	}
+	if left < pr {
+		quick(a, left, pr)
+	}
+	if pl < right {
+		quick(a, pl, right)
+	}
+}
+
 func main() {
 	var n int
 
@@ -75,6 +104,6 @@ func main() {
 		fmt.Scanf("%d", &a[i])
 	}
 
-	selection(a)
+	quick(a, 0, len(a)-1)
 	fmt.Printf("%v\n", a)
 }
