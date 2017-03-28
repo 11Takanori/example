@@ -65,8 +65,8 @@ func selection(a []int) {
 
 func shell(a []int) {
 	var i, j, h int
-	for h = (len(a) - 1) / 2; h > 0; h /= 2 {
-		for i = h; i < len(a)-1; i++ {
+	for h = len(a) / 2; h > 0; h /= 2 {
+		for i = h; i < len(a); i++ {
 			tmp := a[i]
 			for j = i - h; j >= 0 && a[j] > tmp; j -= h {
 				a[j+h] = a[j]
@@ -74,6 +74,7 @@ func shell(a []int) {
 			a[j+h] = tmp
 		}
 	}
+
 }
 
 func quick(a []int, left, right int) {
