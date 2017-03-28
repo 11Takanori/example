@@ -74,7 +74,6 @@ func shell(a []int) {
 			a[j+h] = tmp
 		}
 	}
-
 }
 
 func quick(a []int, left, right int) {
