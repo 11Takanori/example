@@ -120,6 +120,45 @@ func quick(a []int, left, right int) {
 	}
 }
 
+func merge(a []int, b []int) []int {
+	r := make([]int, len(a)+len(b))
+	i := 0
+	j := 0
+
+	for i < len(a) && j < len(b) {
+		if a[i] <= b[j] {
+			r[i+j] = a[i]
+			i++
+		} else {
+			r[i+j] = b[j]
+			j++
+		}
+	}
+
+	for i < len(a) {
+		r[i+j] = a[i]
+		i++
+	}
+	for j < len(b) {
+		r[i+j] = b[j]
+		j++
+	}
+
+	return r
+}
+
+func Mergesort(a []int) []int {
+	if len(a) < 2 {
+		return a
+	}
+
+	middle := len(a) / 2
+	former := Mergesort(a[:middle])
+	latter := Mergesort(a[middle:])
+
+	return merge(former, latter)
+}
+
 func main() {
 	var n int
 
@@ -132,6 +171,6 @@ func main() {
 		fmt.Scanf("%d", &a[i])
 	}
 
-	shell2(a)
-	fmt.Printf("%v\n", a)
+	arr := Mergesort(a)
+	fmt.Printf("%v\n", Mergesort(arr))
 }
