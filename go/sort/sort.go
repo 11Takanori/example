@@ -159,6 +159,38 @@ func Mergesort(a []int) []int {
 	return merge(former, latter)
 }
 
+func downheap(a []int, left, right int) {
+	var parent, child int
+	temp := a[left]
+
+	for parent = left; parent < (right+1)/2; parent = child {
+		cl := parent*2 + 1
+		cr := cl + 1
+
+		if cr <= right && a[cr] > a[cl] {
+			child = cr
+		} else {
+			child = cl
+		}
+
+		if temp >= a[child] {
+			break
+		}
+		a[parent] = a[child]
+	}
+	a[parent] = temp
+}
+
+func Heapsort(a []int) {
+	for i := (len(a) - 1) / 2; i >= 0; i-- {
+		downheap(a, i, len(a)-1)
+	}
+	for i := len(a) - 1; i > 0; i-- {
+		a[0], a[i] = a[i], a[0]
+		downheap(a, 0, i-1)
+	}
+}
+
 func main() {
 	var n int
 
@@ -171,6 +203,8 @@ func main() {
 		fmt.Scanf("%d", &a[i])
 	}
 
-	arr := Mergesort(a)
-	fmt.Printf("%v\n", Mergesort(arr))
+	// arr := Mergesort(a)
+	Heapsort(a)
+
+	fmt.Printf("%v\n", a)
 }
