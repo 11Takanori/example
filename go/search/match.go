@@ -71,7 +71,7 @@ func bm_match(txt, pat string) int {
 
 	for pt < txt_len {
 		pp = pat_len - 1
-		for pt < txt_len {
+		for txt[pt] == pat[pp] {
 			if pp == 0 {
 				return pt
 			}
