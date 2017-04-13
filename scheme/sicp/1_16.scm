@@ -33,7 +33,8 @@
         ((even? n) (square (fast-expt b (/ n 2))))
         (else (* b (fast-expt b (- n 1))))))
 
-(define (square x) (* x x))
+(define (square x)
+  (* x x))
 
 (define (even? n)
   (= (mod n 2) 0))
