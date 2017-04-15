@@ -6,8 +6,8 @@
         ((even? count)
           (fib-iter a
                     b
-                    ?
-                    ?
+                    (+ (* p p)   (* q q))
+                    (+ (* 2 p q) (* q q))
                     (/ count 2)))
         (else (fib-iter (+ (* b q) (* a q) (* a p))
                         (+ (* b p) (* a q))
