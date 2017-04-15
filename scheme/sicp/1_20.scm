@@ -2,3 +2,31 @@
   (if (= b 0)
       a
       (gcd b (mod a b))))
+
+;normal-order-evaluation
+;(gcd 206 40)
+;(if (= 40 0) ...)
+;(gcd 40 (mod 206 40))
+;(if (= (mod 206 40) 0) ...)
+;(if (= 6 0) ...)
+;(gcd (mod 206 40) (mod 40 (mod 206 40)))
+;(if (= (mod 40 (mod 206 40)) 0) ...)
+;(if (= 4 0) ...)
+;(gcd (mod 40 (mod 206 40)) (mod (mod 206 40) (mod 40 (mod 206 40))))
+;(if (= (mod (mod 206 40) (mod 40 (mod 206 40))) 0) ...)
+;(if (= 2 0) ...)
+;(gcd (mod (mod 206 40) (mod 40 (mod 206 40))) (mod (mod 40 (mod 206 40)) (mod (mod 206 40) (mod 40 (mod 206 40)))))
+;(if (= (mod (mod 40 (mod 206 40)) (mod (mod 206 40) (mod 40 (mod 206 40)))) 0) ...)
+;(if (= 0 0) ...)
+;(mod (mod 206 40) (mod 40 (mod 206 40)))
+
+;applicative-order-evaluation
+;(gcd 206 40)
+;(gcd 40 (mod 206 40))
+;(gcd 40 6)
+;(gcd 6 (mod 40 6))
+;(gcd 6 4)
+;(gcd 4 (mod 6 4))
+;(gcd 4 2)
+;(gcd 2 (mod 4 2))
+;(gcd 2 0)
