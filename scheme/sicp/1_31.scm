@@ -15,7 +15,7 @@
   (if (> a b)
       1
       (* (term a)
-         (product term (inc a) inc b))))
+         (product term (next a) next b))))
 
 ;iterative process
 (define (product term a next b)
