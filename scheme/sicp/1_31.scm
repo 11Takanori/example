@@ -12,7 +12,17 @@
 
 ;recursive process
 (define (product term a next b)
- (if (> a b)
-     1
-     (* (term a)
-        (product term (inc a) inc b))))
+  (if (> a b)
+      1
+      (* (term a)
+         (product term (inc a) inc b))))
+
+;iterative process
+(define (product term a next b)
+  (define (iter a result)
+    (if (> a b)
+        result
+        (iter (next a) (* result (term a)))))
+  (iter a 1))
+
+(* (product pi-term 1 inc 10) 4)
