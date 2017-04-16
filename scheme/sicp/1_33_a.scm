@@ -14,7 +14,6 @@
 (define (prime? n)
   (= n (smallest-divisor n)))
 
-
 (define (filtered-accumulate filter combiner null-value term a next b)
   (cond ((> a b) null-value)
         ((filter a) (combiner (term a)
