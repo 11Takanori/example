@@ -15,6 +15,6 @@
     (if (< n 1)
         result
         (iter (- n 1) (compose f result))))
-  (iter n (lambda (x) x)))
+  (iter n identity))
 
 ((repeated square 2) 5)
