@@ -39,3 +39,8 @@
 ;(cons (1) (cons (3) (5 7 1 4 9 16 25)))
 ;(cons (1) (3 5 7 1 4 9 16 25))
 ;(1 3 5 7 1 4 9 16 25)
+
+(define (last-pair items)
+  (if (= (length items) 1)
+      (car items)
+      (last-pair (cdr items))))
