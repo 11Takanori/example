@@ -7,10 +7,9 @@
               (list (car l)))))
 
 (define (deep-reverse l)
-  (print "l = " l)
   (if (null? (cdr l))
       (list (reverse (car l)))
       (append (deep-reverse (cdr l))
               (list (reverse (car l))))))
 
-(deep-reverse x) 
+(deep-reverse x)
