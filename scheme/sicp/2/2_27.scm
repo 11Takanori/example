@@ -12,4 +12,12 @@
       (append (deep-reverse (cdr l))
               (list (reverse (car l))))))
 
+(define (deep-reverse l)
+  (cond ((null? l) ())
+        ((pair? (car l))
+        (append (deep-reverse (cdr l))
+                (list (deep-reverse (car l)))))
+        (else
+        (append (deep-reverse (cdr l))
+                (list (car l))))))
 (deep-reverse x)
