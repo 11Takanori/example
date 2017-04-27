@@ -20,4 +20,10 @@
         (else
         (append (deep-reverse (cdr l))
                 (list (car l))))))
+
+(define (deep-reverse l)
+  (if (not (pair? l))
+      l
+      (reverse (map deep-reverse l))))
+
 (deep-reverse x)
