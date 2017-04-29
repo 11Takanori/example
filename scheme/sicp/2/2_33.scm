@@ -26,3 +26,8 @@
 
 (define (length sequence)
   (accumulate (lambda (x y) (+ 1 y)) 0 sequence))
+
+;(length (list 1 2 3))
+;(+ 1 (accumulate op 0 (2 3)))
+;(+ 1 (+ 1 (accumulate op 0 3)))
+;(+ 1 (+ 1 (+ 1 0)))
