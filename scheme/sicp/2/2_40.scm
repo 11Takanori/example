@@ -3,11 +3,11 @@
       ()
       (cons l (enumerate-interval (+ l 1) h))))
 
-(define (accumulate op initial sequence)
-  (if (null? sequence)
-      initial
-      (op (car sequence)
-          (accumulate op initial (cdr sequence)))))
+(define (accumulate op i s)
+  (if (null? s)
+      i
+      (op (car s)
+          (accumulate op i (cdr s)))))
 
 (define (unique-paires j i)
   (accumulate append
