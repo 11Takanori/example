@@ -44,3 +44,17 @@
   (cond ((= bit 0) (left-branch branch))
         ((= bit 1) (right-branch branch))
         (else (erro "bad bit -- CHOOSE-BRANCH bit"))))
+
+(define (adjoin x set)
+  (cond ((null? set) (set x))
+        ((< (weight x) (weight (car set))) (cons x set))
+        (else (cons (car set)
+                    (adjoin-set x (cdr set))))))
+
+(define (make-leaf-set pairs)
+  (if (null? pairs)
+      ()
+      (let ((pair (car pairs)))
+        (adjoin-set (make-leaf (car pair)
+                               (cadr pair))
+                    (make-leaf-set (cdr pairs))))))
