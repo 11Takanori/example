@@ -14,7 +14,7 @@
         (append (symbols left) (symbols right))
         (+ (weight left) (weight right))))
 
-(define (left-branch tree) (cadr tree))
+(define (left-branch tree) (car tree))
 
 (define (right-branch tree) (cadr tree))
 
