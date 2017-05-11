@@ -20,8 +20,8 @@
 
 (define (symbols tree)
   (if (leaf? tree)
-      (list (symbol-leaf tree)
-      (cadr tree))))
+      (list (symbol-leaf tree))
+      (caddr tree)))
 
 (define (weight tree)
   (if (leaf? tree)
