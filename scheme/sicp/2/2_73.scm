@@ -49,3 +49,21 @@
     (put 'make '* make-product)
     (put 'deriv '* deriv-product)
     'done)
+
+(define (install-exponent-package)
+  (define (base x) (car s))
+  (define (exponent s) (cadr s))
+  (define (make-exponentiation b e)
+    (cond ((=number? e 0) 1)
+          ((=number? e 1) b)
+          (else (list '** b e))))
+  (define (deriv-exponentation exp var)
+    (let ((make-p (get 'make '*)))
+         (make-p
+           (make-p
+             (exponent exp)
+             (make-exponentiation (base exp) (- (exponent exp) 1)))
+            (deriv (base exp) var))))
+  (put 'make '** make-exponentiation)
+  (put 'deriv '** deriv-exponentation)
+  'done)
