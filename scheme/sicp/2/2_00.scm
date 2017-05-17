@@ -1,0 +1,11 @@
+(define (put op type item)
+    (if (not (hash-table-exists? op-table op))
+        (hash-table-put! op-table op (make-hash-table)))
+    (let ((type-table (hash-table-get op-table op)))
+      (hash-table-put! type-table type item)))
+
+(define (get op type)
+    (if (not (hash-table-exists? op-table op))
+        (hash-table-put! op-table op (make-hash-table)))
+    (let ((type-table (hash-table-get op-table op)))
+      (hash-table-get type-table type)))
