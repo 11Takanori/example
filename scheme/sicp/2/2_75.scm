@@ -9,9 +9,6 @@
             (error "Unknown op -- MAKE-FROM-REAL-IMAG" op))))
   dispatch)
 
-(define (apply-generic op arg) (arg op))
-
-
 (define (make-from-mag-ang mag angle)
   (define (dispatch op)
     (cond ((eq? op 'real-part) (* mag (cos a)))
