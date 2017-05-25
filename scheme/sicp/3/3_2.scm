@@ -1,4 +1,4 @@
-(define  (make-monitored f)
+(define (make-monitored f)
   (let ((count 0))
     (define (mf m)
       (cond ((eq? m 'how-many-calls?)
