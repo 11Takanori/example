@@ -1,0 +1,7 @@
+(define (make-withdraw intial-amount)
+  (let ((blance intial-amount))
+    (lambda (amount)
+      (if (>= blance amount)
+          (begin (set! blance (- blance amount))
+                  blance)
+          "Insufficient funds"))))
