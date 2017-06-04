@@ -6,9 +6,19 @@
          1)))
 
 ; 3
-(define x (cons 'x (cons 'x (cons 'x 'x))))
+(define a (cons 'x (cons 'x (cons 'x 'x))))
 
 ; 4
 (define a (cons 'x 'x))
 (define b (cons a 'y))
 (define c (cons a b))
+
+; 7
+(define a (cons 'x 'x))
+(define b (cons a a))
+(define c (cons b b))
+
+; ∞
+(define a (cons 'x 'x))
+(define b (cons a 'x))
+(set-cdr! a b)
