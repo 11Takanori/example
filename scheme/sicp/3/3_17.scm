@@ -11,7 +11,7 @@
 ; 4
 (define a (cons 'x 'x))
 (define b (cons a 'y))
-(define c (cons a b))
+(define c (cons a (cdr b)))
 
 ; 7
 (define a (cons 'x 'x))
