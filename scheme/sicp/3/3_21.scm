@@ -13,7 +13,7 @@
 (define (front-queue queue)
   (if (empty-queue? queue)
       (error "FRONT called with an empty queue" queue)
-      (car (fron-ptr queue))))
+      (car (front-ptr queue))))
 
 (define (insert-queue! queue item)
   (let ((new-pair (cons item '())))
@@ -30,5 +30,5 @@
   (cond ((empty-queue? queue)
          (error "DELETE called with an empty queeu" queue))
         (else
-         (set-front-ptr! queue (cdr (fron-ptr queue)))
+         (set-front-ptr! queue (cdr (front-ptr queue)))
          queue)))
