@@ -32,3 +32,6 @@
         (else
          (set-front-ptr! queue (cdr (front-ptr queue)))
          queue)))
+
+(define (print-queue queue)
+ (print (front-ptr queue)))
