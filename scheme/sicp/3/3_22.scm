@@ -16,7 +16,7 @@
               front-ptr))))
     (define (delete-queue!)
       (cond ((empty-queue?)
-              (error "DELETE called with an empty queeu"))
+              (error "DELETE called with an empty queue"))
             (else
               (set-front-ptr! (cdr front-ptr)))))
     (define (front-queue)
