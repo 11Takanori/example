@@ -65,7 +65,12 @@
     (if (empty-agenda? q)
         (set-segments! agenda (rest-segments agenda))))
 
-;;;;;;
+(define (remove-first-agenda-item agenda)
+  (if (empty-agenda? agenda)
+      (error "Agenda is empty -- FIRST-ITEM")
+      (let ((first-seg (first-segment agenda)))
+        (set-current-time! agenda (segment-time first-seg))
+        (front-queue (segment-queue first-seg)))))
 
 (define (probe name wire)
   (add-action! wire
