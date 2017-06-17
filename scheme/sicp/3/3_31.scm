@@ -42,8 +42,7 @@
       (make-time-segment time q)))
   (define (add-to-segments! segments)
     (if (= (segment-time (car segments)) time)
-        (insert-queue! (segment-queue (car segments))
-                       action)
+        (insert-queue! (segment-queue (car segments)) action)
         (let ((rest (cdr segments)))
           (if (belong-before? rest)
               (set-cdr!
