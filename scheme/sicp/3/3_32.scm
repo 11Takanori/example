@@ -128,8 +128,6 @@
 
 (define (make-agenda) (list 0))
 
-(define (current-time agenda) (car agenda))
-
 (define (set-current-time! agenda time)
   (set-car! agenda time))
 
