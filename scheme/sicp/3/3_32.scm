@@ -112,8 +112,6 @@
                  segments))
          (add-to-segments! segments))))
 
-(define (current-time agenda) (car agenda))
-
 (define (after-delay delay action)
   (add-to-agenda! (+ delay (current-time the-agenda))
                   action
@@ -127,6 +125,8 @@
 (define (segment-queue s) (cdr s))
 
 (define (make-agenda) (list 0))
+
+(define (current-time agenda) (car agenda))
 
 (define (set-current-time! agenda time)
   (set-car! agenda time))
@@ -199,7 +199,6 @@
 
 
 
-(define (make-agenda) (list 0))
 (define the-agenda (make-agenda))
 (define inverter-delay 2)
 (define and-gate-delay 3)
