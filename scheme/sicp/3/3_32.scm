@@ -73,19 +73,6 @@
 
 
 ; agenda
-(define (first-agenda-item agenda)
-  (if (empty-agenda? agenda)
-      (error "Agenda is empty -- FIRST-AGENDA-ITEM")
-      (let ((first-seg (first-segment agenda)))
-        (set-current-time! agenda (segment-time first-seg))
-        (front-queue (segment-queue first-seg)))))
-
-(define (remove-first-agenda-item! agenda)
-  (let ((q (segment-queue (first-segment agenda))))
-    (delete-queue! q)
-    (if (empty-queue? q)
-        (set-segments! agenda (rest-segments agenda)))))
-
 (define (add-to-agenda! time action agenda)
   (define (belong-before? segments)
     (or (null? segments)
@@ -111,6 +98,19 @@
            (cons (make-new-time-segment time action)
                  segments))
          (add-to-segments! segments))))
+
+(define (remove-first-agenda-item! agenda)
+  (let ((q (segment-queue (first-segment agenda))))
+    (delete-queue! q)
+    (if (empty-queue? q)
+        (set-segments! agenda (rest-segments agenda)))))
+
+(define (first-agenda-item agenda)
+  (if (empty-agenda? agenda)
+      (error "Agenda is empty -- FIRST-AGENDA-ITEM")
+      (let ((first-seg (first-segment agenda)))
+        (set-current-time! agenda (segment-time first-seg))
+        (front-queue (segment-queue first-seg)))))
 
 (define (after-delay delay action)
   (add-to-agenda! (+ delay (current-time the-agenda))
@@ -202,7 +202,6 @@
 (define the-agenda (make-agenda))
 (define inverter-delay 2)
 (define and-gate-delay 3)
-(define or-gate-delay 5)
 
 (define input1 (make-wire))
 (define input2 (make-wire))
