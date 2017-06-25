@@ -28,3 +28,9 @@
   (connect a2 me)
   (connect sum me)
   me)
+
+(define (inform-about-value constraint)
+  (constraint 'I-have-a-value))
+
+(define (inform-about-no-value)
+  (constraint 'I-lost-my-value))
