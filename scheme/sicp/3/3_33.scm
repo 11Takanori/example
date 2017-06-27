@@ -98,8 +98,8 @@
   me)
 
 (define (make-connector)
-  (let ((value false) (informant false) (constraints '()))
-    (define (set-my-value newval stter)
+  (let ((value #f) (informant #f) (constraints '()))
+    (define (set-my-value newval setter)
       (cond ((not (has-value? me))
              (set! value newval)
              (set! informant setter)
@@ -111,7 +111,7 @@
             (else 'ignored)))
     (define (forget-my-value retractor)
       (if (eq? retractor informant)
-          (begin (set! informant false)
+          (begin (set! informant #f)
                  (for-each-except retractor
                                   inform-about-no-value
                                   constraints))
@@ -125,7 +125,7 @@
       'done)
     (define (me request)
       (cond ((eq? request 'has-value?)
-             (if informant true false))
+             (if informant #t #f))
             ((eq? request 'value) value)
             ((eq? request 'set-value!) set-my-value)
             ((eq? request 'forget) forget-my-value)
