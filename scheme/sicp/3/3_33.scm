@@ -29,12 +29,6 @@
   (connect sum me)
   me)
 
-(define (inform-about-value constraint)
-  (constraint 'I-have-a-value))
-
-(define (inform-about-no-value)
-  (constraint 'I-lost-my-value))
-
 (define (multiplier m1 m2 product)
   (define (process-new-value)
     (cond ((or (and (has-value? m1) (= (get-value m1) 0))
@@ -141,6 +135,12 @@
           (else (procedure (car items))
                 (loop (cdr items)))))
   (loop list))
+
+(define (inform-about-value constraint)
+  (constraint 'I-have-a-value))
+
+(define (inform-about-no-value)
+  (constraint 'I-lost-my-value))
 
 (define (has-value? connector)
   (connector 'has-value?))
