@@ -156,3 +156,24 @@
 
 (define (connect connector new-constraint)
   ((connector 'connect) new-constraint))
+
+(define (averager a b c)
+  (let ((s (make-connector))
+        (t (make-connector)))
+    (adder a b s)
+    (constant 0.5 t)
+    (multiplier s t c)
+    'ok))
+
+(define A (make-connector))
+(define B (make-connector))
+(define AVERAGE (make-connector))
+
+(averager A B AVERAGE)
+
+(probe 'a A)
+(probe 'b B)
+(probe 'average AVERAGE)
+
+(set-value! A 99 'user)
+(set-value! B 1 'user)
