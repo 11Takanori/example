@@ -6,9 +6,10 @@
             (set-value! a
                        (sqrt (get-value b))
                        me))
+    (if (has-value? a)
         (set-value! b
                     (* (get-value a) (get-value a))
-                    me)))
+                    me))))
   (define (process-forget-value)
     (forget-value! a me)
     (forget-value! b me)
@@ -23,7 +24,6 @@
   (connect a me)
   (connect b me)
 me)
-
 
 (define A (make-connector))
 (define B (make-connector))
