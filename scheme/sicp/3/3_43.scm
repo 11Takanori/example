@@ -14,7 +14,7 @@
             ((eq? m 'balance) balance)
             ((eq? m 'serializer) balance-serializer)
             (else (error "Unknown request -- MAKE-ACCOUNT"
-                         n))))
+                         m))))
   dispatch))
 
 (define (deposit account amount)
