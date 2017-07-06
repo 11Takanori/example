@@ -25,3 +25,11 @@
       #t
       (begin (set-car! cell #t)
              #f)))
+
+(define (test-and-set! cell)
+ (without-interrupts
+   (lambda ()
+     (if (car cell)
+         #t
+         (begin (set-car! cell #t)
+                #f)))))
