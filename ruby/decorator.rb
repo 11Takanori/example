@@ -33,27 +33,23 @@ class WriterDecorator
   end
 end
 
-class NumberingWriter < WriterDecorator
-  def initialize(real_writer)
-    super(real_writer)
-    @line_number = 1
-  end
-
+module NumberingWriter
+  attr_reader :line_number
   def write_line(line)
-    @real_writer.write_line("#{@line_number} : #{line}")
+    @line_number = 1 unless @line_number
+    super("#{@line_number} : #{line}")
+    @line_number += 1
   end
 end
 
-class TimestampingWriter < WriterDecorator
+module TimeStampingWriter
   def write_line(line)
-    @real_writer.write_line("#{Time.new} : #{line}")
+    super("#{Time.new} : #{line}")
   end
 end
 
-f = NumberingWriter.new(SimpleWriter.new('file1.txt'))
-f.write_line("hello")
-f.close
-
-f = TimestampingWriter.new(SimpleWriter.new('file2.txt'))
-f.write_line("hello")
+f = SimpleWriter.new('file1.txt')
+f.extend TimeStampingWriter
+f.extend NumberingWriter
+f.write_line('hello')
 f.close
