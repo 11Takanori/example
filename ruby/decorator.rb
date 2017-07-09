@@ -21,25 +21,15 @@ class SimpleWriter
   end
 end
 
+require "forwardable"
+
 class WriterDecorator
+  extend Forwardable
+
+  def_delegators :@real_writer, :write_line, :pos, :rewind, :close
+
   def initialize(real_writer)
     @real_writer = real_writer
-  end
-
-  def write_line(line)
-    @real_writer = real_writer
-  end
-
-  def pos
-    @real_writer.pos
-  end
-
-  def rewind
-    @real_writer.rewind
-  end
-
-  def close
-    @real_writer.close
   end
 end
 
@@ -60,9 +50,9 @@ class TimestampingWriter < WriterDecorator
   end
 end
 
-# f = NumberingWriter.new(SimpleWriter.new('file1.txt'))
-# f.write_line("hello")
-# f.close
+f = NumberingWriter.new(SimpleWriter.new('file1.txt'))
+f.write_line("hello")
+f.close
 
 f = TimestampingWriter.new(SimpleWriter.new('file2.txt'))
 f.write_line("hello")
