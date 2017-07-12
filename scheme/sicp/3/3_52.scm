@@ -22,3 +22,8 @@
 
 ;stream-ref: 136
 ;display-stream: 10, 15, 45, 55, 120, 190, 210
+
+;if we had implemented (delay <exp>) simply as (lambda () <exp>)
+;without using the optimization provided by memo-proc
+;stream-ref: 162
+;display-stream: 15, 180, 230, 305
