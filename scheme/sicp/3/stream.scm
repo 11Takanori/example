@@ -41,6 +41,9 @@
                                       (stream-cdr stream))))
         (else (stream-fillter pred (stream-cdr stream)))))
 
+(define (cons-stream a b)
+  (cons a (delay b)))
+
 (define (force delayed-object)
   (delayed-object))
 
