@@ -49,6 +49,9 @@
 
 (define the-empty-stream '())
 
+(define (stream-null? a)
+  (null? a))
+
 (define (memo-proc proc)
   (let ((already-run? #f) (result #f))
     (lambda ()
