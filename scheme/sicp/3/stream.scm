@@ -15,8 +15,8 @@
       (begin (proc (stream-car s))
              (stream-for-each proc (stream-cdr s)))))
 
-(define (display-line-stream s)
-  (stream-for-each display-line-stream s))
+(define (display-stream s)
+  (stream-for-each display-line s))
 
 (define (display-line x)
   (newline)
@@ -52,3 +52,8 @@
                  (set! already-run? #t)
                  result)
           result))))
+
+(define-syntax delay
+  (syntax-rules ()
+    ((_ <exp>)
+     (memo-proc (lambda () <exp>)))))
