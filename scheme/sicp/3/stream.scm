@@ -47,6 +47,8 @@
 (define (force delayed-object)
   (delayed-object))
 
+(define the-empty-stream '())
+
 (define (memo-proc proc)
   (let ((already-run? #f) (result #f))
     (lambda ()
