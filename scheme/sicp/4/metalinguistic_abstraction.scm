@@ -60,6 +60,8 @@
 
 (define (variable? exp) (symbol? exp))
 
+
+;; quoted
 (define (quoted? exp)
  (taggle-list? exp 'quote))
 
@@ -70,6 +72,7 @@
      (eq? (car exp) tag)
      #f))
 
+;; assignment
 (define (assignment? exp)
  (tagged-list? exp 'set!))
 
@@ -77,6 +80,8 @@
 
 (define (assignment-value exp) (caddr exp))
 
+
+;; definition
 (define (definition? exp)
  (tagged-list? exp 'define))
 
@@ -89,3 +94,13 @@
  (if (symbol? (cadr exp))
      (cadr exp)
      (caadr exp)))
+
+;; lambda
+(define (lambda? exp) (tagged-list? exp 'lambda))
+
+(define (lambda-parameters exp) (cadr exp))
+
+(define (lambda-body exp) (cddr exp))
+
+(define (make-lambda lambda-parameters body)
+ (cons 'lambda (cons parameters body)))
