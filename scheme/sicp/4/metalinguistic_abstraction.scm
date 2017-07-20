@@ -119,3 +119,19 @@
 
  (define (make-if predicate consequent alternative)
    (list 'if predicate consequent alternative))
+
+;; begin
+(define (begin? exp) (tagged-list? exp 'begin))
+
+(define (begin-actions exp) (cdr exp))
+
+(define (last-exp? seq) (null? (cdr seq)))
+
+(define (first-exp seq) (car seq))
+
+(define (rest-exps seq) (cdr seq))
+
+(define (sequence->exp seq)
+ (cond ((null? seq) seq)
+       ((last-exp? seq) (first-exp seq))
+       (else (make-begin seq))))
