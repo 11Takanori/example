@@ -135,3 +135,5 @@
  (cond ((null? seq) seq)
        ((last-exp? seq) (first-exp seq))
        (else (make-begin seq))))
+
+(define (make-begin seq) (cons 'begin seq))
