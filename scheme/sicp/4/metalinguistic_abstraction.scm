@@ -52,3 +52,40 @@
                    (eval (definition-value exp) env)
                    env)
  'ok)
+
+(define (self-evaluating? exp)
+ (cond ((number? exp) #t)
+       ((string? exp) #t)
+       (else #f)))
+
+(define (variable? exp) (symbol? exp))
+
+(define (quoted? exp)
+ (taggle-list? exp 'quote))
+
+(define (text-of-quotaion exp) (cadr exp))
+
+(define (taggle-list? exp exp)
+ (if (pair? exp)
+     (eq? (car exp) tag)
+     #f))
+
+(define (assignment? exp)
+ (tagged-list? exp 'set!))
+
+(define (assignment-variable exp) (cadr exp))
+
+(define (assignment-value exp) (caddr exp))
+
+(define (definition? exp)
+ (tagged-list? exp 'define))
+
+(define (definition-variable exp)
+ (if (symbol? (cadr exp))
+     (cadr exp)
+     (caadr exp)))
+
+(define (definition-value exp)
+ (if (symbol? (cadr exp))
+     (cadr exp)
+     (caadr exp)))
