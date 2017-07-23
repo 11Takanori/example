@@ -28,3 +28,33 @@ def connect
     connection.close
   end
 end
+
+# 2
+# def number_of_living_descendants
+#   chilidren.inject(0) do |count, child|
+#     count += 1 if child.alive?
+#     count + child.number_of_living_descendants
+#   end
+# end
+#
+# def number_of_descendants_named(name)
+#   chilidren.inject(0) do |count, child|
+#     count += 1 if child.name == name
+#     count + child.number_of_descendants_named(name)
+#   end
+# end
+
+def number_of_living_descendants
+  count_descendants_matching { |d| d.alive? }
+end
+
+def number_of_descendants_named(name)
+  count_descendants_matching { |d| d.name == name }
+end
+
+def count_descendants_matching(&block)
+  chilidren.sum do |count, child|
+    count += 1 if yield child
+    count + child.count_descendants_matching(&block)
+  end
+end
