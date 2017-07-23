@@ -137,3 +137,16 @@
        (else (make-begin seq))))
 
 (define (make-begin seq) (cons 'begin seq))
+
+;; operand
+(define (application? exp) (pair? exp))
+
+(define (operator exp) (car exp))
+
+(define (operand exp) (cdr exp))
+
+(define (no-operands? ops) (null? ops))
+
+(define (first-operand ops) (car ops))
+
+(define (rest-operands ops) (car ops))
