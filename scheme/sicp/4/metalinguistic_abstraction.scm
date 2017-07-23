@@ -72,6 +72,7 @@
      (eq? (car exp) tag)
      #f))
 
+
 ;; assignment
 (define (assignment? exp)
  (tagged-list? exp 'set!))
@@ -95,6 +96,7 @@
      (cadr exp)
      (caadr exp)))
 
+
 ;; lambda
 (define (lambda? exp) (tagged-list? exp 'lambda))
 
@@ -105,20 +107,22 @@
 (define (make-lambda lambda-parameters body)
  (cons 'lambda (cons parameters body)))
 
- ;; if
- (define (if? exp) (tagged-list? exp 'if))
 
- (define (if-predicate exp) (cadr exp))
+;; if
+(define (if? exp) (tagged-list? exp 'if))
 
- (define (if-consequent exp) (caddr exp))
+(define (if-predicate exp) (cadr exp))
 
- (define (if-alternative exp)
-   (if (not (null? (cdddr exp)))
-       (cadddr exp)
-       'false))
+(define (if-consequent exp) (caddr exp))
 
- (define (make-if predicate consequent alternative)
-   (list 'if predicate consequent alternative))
+(define (if-alternative exp)
+ (if (not (null? (cdddr exp)))
+     (cadddr exp)
+     'false))
+
+(define (make-if predicate consequent alternative)
+ (list 'if predicate consequent alternative))
+
 
 ;; begin
 (define (begin? exp) (tagged-list? exp 'begin))
@@ -138,6 +142,7 @@
 
 (define (make-begin seq) (cons 'begin seq))
 
+
 ;; operand
 (define (application? exp) (pair? exp))
 
@@ -150,6 +155,7 @@
 (define (first-operand ops) (car ops))
 
 (define (rest-operands ops) (car ops))
+
 
 ;; cond
 (define (cond? exp) (taggle-list? exp 'cond))
