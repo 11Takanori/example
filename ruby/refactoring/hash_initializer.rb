@@ -1,7 +1,6 @@
 module CustomInitializers
   def hash_initializer(*attribute_names)
     define_method(:initialize) do |args|
-
       attribute_names.each do |attribute_name|
         instance_variable_set "@#{attribute_name}", args[attribute_name]
       end
