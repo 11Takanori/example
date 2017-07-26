@@ -188,3 +188,14 @@
             (make-if (cond-predicate first)
                      (sequence->exp (cond-actions first))
                      (expand-clauses rest))))))
+
+(define (my-and exp)
+  (define (my-and-iter exp result)
+    (if (null? exp)
+        result
+        (if (car exp)
+            (my-and-iter (cdr exp) (car exp))
+            #f)))
+  (if (null? exp)
+      #t
+      (my-and-iter exp '())))
