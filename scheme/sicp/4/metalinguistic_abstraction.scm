@@ -69,7 +69,7 @@
 
 (define (text-of-quotaion exp) (cadr exp))
 
-(define (taggle-list? exp exp)
+(define (taggle-list? exp tag)
  (if (pair? exp)
      (eq? (car exp) tag)
      #f))
