@@ -199,3 +199,10 @@
   (if (null? exp)
       #t
       (my-and-iter exp '())))
+
+(define (my-or exp)
+  (if (null? exp)
+      #f
+      (if (car exp)
+          (car exp)
+          (my-or (cdr exp)))))
