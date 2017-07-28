@@ -65,11 +65,11 @@
 
 ;; quoted
 (define (quoted? exp)
- (taggle-list? exp 'quote))
+ (tagged-list? exp 'quote))
 
 (define (text-of-quotaion exp) (cadr exp))
 
-(define (taggle-list? exp tag)
+(define (tagged-list? exp tag)
  (if (pair? exp)
      (eq? (car exp) tag)
      #f))
@@ -160,7 +160,7 @@
 
 
 ;; cond
-(define (cond? exp) (taggle-list? exp 'cond))
+(define (cond? exp) (tagged-list? exp 'cond))
 
 (define (cond-clauses exp) (cdr exp))
 
