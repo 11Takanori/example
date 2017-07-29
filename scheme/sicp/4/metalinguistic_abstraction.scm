@@ -94,9 +94,10 @@
      (caadr exp)))
 
 (define (definition-value exp)
- (if (symbol? (cadr exp))
-     (cadr exp)
-     (caadr exp)))
+  (if (symbol? (cadr exp))
+      (caddr exp)
+      (make-lambda (cdadr exp)
+                   (cddr exp))))
 
 
 ;; lambda
@@ -314,6 +315,9 @@
 
 (define (prompt-for-input string)
   (newline) (newline) (display string) (newline))
+
+(define (announce-output string)
+  (newline) (display string) (newline))
 
 (define (user-print object)
   (if (compound-procedure? object)
