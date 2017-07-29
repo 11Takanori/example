@@ -223,10 +223,10 @@
 
 (define (add-binding-to-frame! var val frame)
   (set-car! frame (cons var (car frame)))
-  (set-cad! frame (cons val (cdr frame))))
+  (set-cdr! frame (cons val (cdr frame))))
 
 (define (extend-environment vars vals base-env)
-  (if (= (length vars) (length bals))
+  (if (= (length vars) (length vals))
       (cons (make-frame vars vals) base-env)
       (if (< (length vars) (length vals))
           (error "Too many arguments supplied" vars vals)
@@ -272,3 +272,66 @@
             (else (scan (cdr vars) (cdr vals)))))
     (scan (frame-variables frame)
           (frame-values frame))))
+
+
+
+(define (primitive-procedure? proc)
+  (tagged-list? proc 'primitive))
+
+(define (primitive-implementation proc) (cadr proc))
+
+(define primitive-procedures
+  (list (list 'car car)
+        (list 'cdr cdr)
+        (list 'cons cons)
+        (list 'null? null?)
+        ))
+
+(define (primitive-procedure-names)
+  (map car
+       primitive-procedures))
+
+(define (primitive-procedure-objects)
+  (map (lambda (proc) (list 'primitive (cadr proc)))
+       primitive-procedures))
+
+(define (apply-primitive-procedure proc args)
+  (apply-in-underlying-scheme
+    (primitive-implementation proc) args))
+
+(define apply-in-underlying-scheme apply)
+
+(define input-prompt ";;; M-Eval input:")
+(define output-prompt ";;; M-Eval value:")
+
+(define (driver-loop)
+  (prompt-for-input input-prompt)
+  (let ((input (read)))
+    (let ((output (eval input the-global-environment)))
+      (announce-output output-prompt)
+      (user-print output)))
+  (driver-loop))
+
+(define (prompt-for-input string)
+  (newline) (newline) (display string) (newline))
+
+(define (user-print object)
+  (if (compound-procedure? object)
+      (display (list 'compound-procedure
+                     (procedure-parameters object)
+                     (procedure-body object)
+                     '<procedure-env>))
+  (display object)))
+
+(define (setup-environment)
+  (let ((intial-env
+          (extend-environment (primitive-procedure-names)
+                              (primitive-procedure-objects)
+                              the-empty-environment)))
+    (define-variable! 'true #t intial-env)
+    (define-variable! 'false #f intial-env)
+    intial-env))
+
+(define the-global-environment (setup-environment))
+
+;(driver-loop)
