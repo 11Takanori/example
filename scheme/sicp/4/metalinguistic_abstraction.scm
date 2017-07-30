@@ -26,8 +26,8 @@
            (procedure-body procedure)
            (extend-environment
              (procedure-parameters procedure)
-           arguments
-           (procedure-environment procedure))))
+             arguments
+             (procedure-environment procedure))))
         (else
          (error
           "Unknown procedure type -- APPLY" procedure))))
@@ -43,10 +43,15 @@
      (eval (if-consequent exp) env)
      (eval (if-alternative exp) env)))
 
+(define (eval-sequence exps env)
+  (cond ((last-exp? exps) (eval (first-exp exps) env))
+        (else (eval (first-exp exps) env)
+              (eval-sequence (rest-exps exps) env))))
+
 (define (eval-assignment exp env)
- (set-variable-value! (assignment-variable exp)
-                      (eval (assignment-value exp) env)
-                      env)
+  (set-variable-value! (assignment-variable exp)
+                       (eval (assignment-value exp) env)
+                       env)
  'ok)
 
 (define (eval-definition exp env)
@@ -62,17 +67,17 @@
 
 (define (variable? exp) (symbol? exp))
 
-
-;; quoted
-(define (quoted? exp)
- (tagged-list? exp 'quote))
-
-(define (text-of-quotaion exp) (cadr exp))
-
 (define (tagged-list? exp tag)
  (if (pair? exp)
      (eq? (car exp) tag)
      #f))
+
+
+;; quote
+(define (quoted? exp)
+ (tagged-list? exp 'quote))
+
+(define (text-of-quotaion exp) (cadr exp))
 
 
 ;; assignment
@@ -157,7 +162,7 @@
 
 (define (first-operand ops) (car ops))
 
-(define (rest-operands ops) (car ops))
+(define (rest-operands ops) (cdr ops))
 
 
 ;; cond
@@ -286,6 +291,7 @@
         (list 'cdr cdr)
         (list 'cons cons)
         (list 'null? null?)
+        ;(list 'quote quote)
         ))
 
 (define (primitive-procedure-names)
@@ -302,8 +308,8 @@
 
 (define apply-in-underlying-scheme apply)
 
-(define input-prompt ";;; M-Eval input:")
-(define output-prompt ";;; M-Eval value:")
+(define input-prompt "M-Eval input:")
+(define output-prompt "M-Eval value:")
 
 (define (driver-loop)
   (prompt-for-input input-prompt)
@@ -338,4 +344,4 @@
 
 (define the-global-environment (setup-environment))
 
-;(driver-loop)
+(driver-loop)
