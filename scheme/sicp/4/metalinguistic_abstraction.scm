@@ -13,12 +13,12 @@
           (eval-sequence (begin-actions exp) env))
         ((cond? exp) (eval (cond->if exp) env))
         ((application? exp)
-         (apply (eval (operator exp) env)
+         (apply-in-underlying-scheme (eval (operator exp) env)
                 (list-of-values (operand exp) env)))
         (else
          (error "Unknown expression type -- EVAL" exp))))
 
-(define (apply procedure arguments)
+(define (apply-in-underlying-scheme procedure arguments)
   (cond ((primitive-procedure? procedure)
          (apply-primitive-procedure procedure arguments))
         ((compound-procedure? procedure)
@@ -33,15 +33,15 @@
           "Unknown procedure type -- APPLY" procedure))))
 
 (define (list-of-values exps env)
- (if (no-operands? exps)
-     '()
-     (cons (eval (first-operand exps) env)
-           (list-of-values (rest-operands exps) env))))
+  (if (no-operands? exps)
+      '()
+      (cons (eval (first-operand exps) env)
+            (list-of-values (rest-operands exps) env))))
 
 (define (eval-if exp env)
- (if (true? (eval (if-predicate exp) env))
-     (eval (if-consequent exp) env)
-     (eval (if-alternative exp) env)))
+  (if (true? (eval (if-predicate exp) env))
+      (eval (if-consequent exp) env)
+      (eval (if-alternative exp) env)))
 
 (define (eval-sequence exps env)
   (cond ((last-exp? exps) (eval (first-exp exps) env))
@@ -280,7 +280,6 @@
           (frame-values frame))))
 
 
-
 (define (primitive-procedure? proc)
   (tagged-list? proc 'primitive))
 
@@ -291,8 +290,15 @@
         (list 'cdr cdr)
         (list 'cons cons)
         (list 'null? null?)
-        ;(list 'quote quote)
         ))
+
+;(define primitive-procedures
+;  (list (list 'car car)
+;        (list 'cdr cdr)
+;        (list 'cons cons)
+;        (list 'null? null?)
+;        (list 'quote quote)
+;        ))
 
 (define (primitive-procedure-names)
   (map car
@@ -306,10 +312,19 @@
   (apply-in-underlying-scheme
     (primitive-implementation proc) args))
 
-(define apply-in-underlying-scheme apply)
-
 (define input-prompt "M-Eval input:")
 (define output-prompt "M-Eval value:")
+
+(define (setup-environment)
+  (let ((initial-env
+          (extend-environment (primitive-procedure-names)
+                              (primitive-procedure-objects)
+                              the-empty-environment)))
+    (define-variable! 'true #t initial-env)
+    (define-variable! 'false #f initial-env)
+    initial-env))
+
+(define the-global-environment (setup-environment))
 
 (define (driver-loop)
   (prompt-for-input input-prompt)
@@ -332,16 +347,5 @@
                      (procedure-body object)
                      '<procedure-env>))
   (display object)))
-
-(define (setup-environment)
-  (let ((intial-env
-          (extend-environment (primitive-procedure-names)
-                              (primitive-procedure-objects)
-                              the-empty-environment)))
-    (define-variable! 'true #t intial-env)
-    (define-variable! 'false #f intial-env)
-    intial-env))
-
-(define the-global-environment (setup-environment))
 
 (driver-loop)
