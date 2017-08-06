@@ -35,7 +35,6 @@ impl Arena {
             LObj::Cons(_, _) => format!("({})", self.to_string(key)),
         }
     }
-
     fn to_list_string(&self, key: &LRef) -> String {
         match self.get(key) {
             LObj::Cons(ref car, ref cdr) =>
@@ -47,7 +46,6 @@ impl Arena {
             _ => "<internal error>".to_string(),
         }
     }
-
     fn nreverse(&mut self, lst: LRef) -> LRef {
         let mut lst = lst;
         let mut ret = self.make(LObj::Nil);
@@ -76,8 +74,6 @@ impl Arena {
     }
 }
 
-struct Evaluator { arena: Arena, genv: LRef}
-
 #[derive(Clone, PartialEq)]
 enum LObj {
     Nil,
@@ -86,6 +82,27 @@ enum LObj {
     Subr(SubFn),
     Expr(LRef, LRef),
     Cons(LRef, LRef),
+}
+
+impl LObj {
+    fn sym(s: &str) -> LObj {
+        LObj::Sym(s.into())
+    }
+    fn t() -> LObj {
+        LObj::sym("t")
+    }
+    fn car(&self, arena: &Arena) -> LObj {
+        match self {
+            &LObj::Cons(ref x, _) => arena.get(x),
+            _ => LObj::Nil,
+         }
+    }
+    fn cdr(&self, arena: &Arena) -> LObj {
+        match self {
+            &LObj::Cons(_, ref x) => arena.get(x),
+            _ => LObj::Nil,
+        }
+    }
 }
 
 #[derive(Clone, PartialEq)]
@@ -105,7 +122,72 @@ enum SubFn {
     T,
 }
 
+impl SubFn {
+     fn call(&self, arena: &mut Arena, args: &LRef) -> LObj {
+         if let LObj::Cons(ref car, ref cdr) = arena.get(args) {
+             let cdar = arena.get(cdr).car(&arena);
+             let cdar = arena.make(cdar);
+             return match *self {
+                 SubFn::Car => arena.get(car).car(&arena),
+                 SubFn::Cdr => arena.get(car).cdr(&arena),
+                 SubFn::Cons => LObj::Cons(car.clone(), cdar),
+                 SubFn::Eq => match arena.get(car) == arena.get(&cdar) {
+                     true => LObj::t(),
+                     _ => LObj::Nil,
+                 },
+                 SubFn::Atom => match arena.get(car) {
+                     LObj::Cons(_, _) => LObj::Nil,
+                     _ => LObj::t(),
+                 },
+                 SubFn::Numberp => match arena.get(car) {
+                     LObj::Num(_) => LObj::t(),
+                     _ => LObj::Nil,
+                 },
+                 SubFn::Symbolp => match arena.get(car) {
+                     LObj::Num(_) => LObj::t(),
+                     _ => LObj::Nil,
+                 },
+
+
+             };
+         }
+         LObj::Nil
+     }
+     fn all() -> Vec<(SubFn, &'static str)> {
+         vec![
+             (SubFn::Car, "car"),
+             (SubFn::Cdr, "cdr"),
+             (SubFn::Cons, "cons"),
+             (SubFn::Eq, "eq"),
+             (SubFn::Atom, "atom"),
+             (SubFn::Numberp, "numberp"),
+             (SubFn::Symbolp, "symbolp"),
+             (SubFn::Add, "+"),
+             (SubFn::Sub, "-"),
+             (SubFn::Mul, "*"),
+             (SubFn::Div, "/"),
+             (SubFn::Mod, "mod"),
+             (SubFn::T, "t"),
+            ]
+     }
+     fn fold(arena: &mut Arena, car: &LRef, cdr: &LRef, f: &Fn(i64, i64) -> i64) -> LObj {
+         if let LObj::Num(x) = arena.get(car) {
+             if let LObj::Cons(ref cdar, ref cddr) = arena.get(cdr) {
+                 if let LObj::Num(y) = arena.get(cdar) {
+                     let sum = &arena.make(LObj::Num(f(x, y)));
+                     return Self::fold(arena, sum, cddr, f);
+                 }
+             }
+         } else {
+             return arena.get(car);
+         }
+         LObj::Nil
+     }
+}
+
 struct Reader<'a> { next: &'a str }
+
+struct Evaluator { arena: Arena, genv: LRef}
 
 // impl<'a> Reader<'a> {
 //     fn make_num_or_sym(s: &str) -> LObj {
