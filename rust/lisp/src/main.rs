@@ -62,7 +62,7 @@ impl Arena {
         let mut lst1 = lst1;
         let mut lst2 = lst2;
         let mut ret = self.make(LObj::Nil);
-        while let LObj::Cons(car1, cdr1f = self.get(&lst1)) {
+        while let LObj::Cons(car1, cdr1) = self.get(&lst1) {
             if let LObj::Cons(car2, cdr2) = self.get(&lst2) {
                 let car = self.make(LObj::Cons(car1, car2));
                 ret = self.make(LObj::Cons(car, ret));
