@@ -147,8 +147,12 @@ impl SubFn {
                      LObj::Num(_) => LObj::t(),
                      _ => LObj::Nil,
                  },
-
-
+                 SubFn::Add => Self::fold(arena, car, cdr, &|x, y| x + y),
+                 SubFn::Sub => Self::fold(arena, car, cdr, &|x, y| x - y),
+                 SubFn::Mul => Self::fold(arena, car, cdr, &|x, y| x * y),
+                 SubFn::Div => Self::fold(arena, car, cdr, &|x, y| x / y),
+                 SubFn::Mod => Self::fold(arena, car, cdr, &|x, y| x % y),
+                 SubFn::T => LObj::t(),
              };
          }
          LObj::Nil
@@ -177,9 +181,9 @@ impl SubFn {
                      let sum = &arena.make(LObj::Num(f(x, y)));
                      return Self::fold(arena, sum, cddr, f);
                  }
+             }　else {
+                 return arena.get(car);
              }
-         } else {
-             return arena.get(car);
          }
          LObj::Nil
      }
@@ -187,16 +191,60 @@ impl SubFn {
 
 struct Reader<'a> { next: &'a str }
 
-struct Evaluator { arena: Arena, genv: LRef}
+impl<'a> Reader<'a> {
+     fn make_num_or_sym(s: &str) -> LObj {
+         match s.parse::<i64>() {
+             Ok(n) => LObj::Num(n),
+             _ => LObj::sym(s),
+         }
+     }
+     fn read_atom(&mut self) -> LObj {
+         let (atom, next) = match self.next.find(
+             |c: char| c == '(' || c == ')' || c == '\'' || c.is_whitespace()
+         ) {
+             Some(pos) => self.next.split_at(pos),
+             _ => (self.next, ""),
+         };
+         self.next = next;
+         Self::make_num_or_sym(atom)
+     }
+     fn read_list(&mut self, arena: &mut Arena) -> Result<LObj, String> {
+         let mut ret = LObj::Nil;
+         loop {
+             self.next = self.next.trim_left();
+             if self.next.is_empty() {
+                 return Err("unfinished parenthesis".into())
+             } else if self.next.starts_with(")")  {
+                 self.next = self.next.split_at(1).1;
+                 let ret = arena.make(ret);
+                 let ret = arena.nreverse(ret);
+                 return Ok(arena.get(&ret));
+             }
+             let car = try!(self.read(arena));
+             ret = LObj::Cons(arena.make(car), arena.make(ret));
+         }
+     }
+     fn read(&mut self, arena: &mut Arena) -> Result<LObj, String> {
+         self.next = self.next.trim_left();
+         if self.next.is_empty() {
+             return Err("empty input".into());
+         } else if self.next.starts_with(")") {
+             return Err(format!("invalid syntax: {}", self.next));
+         } else if self.next.starts_with("(") {
+             self.next = self.next.split_at(1).1;
+             return self.read_list(arena);
+         } else if self.next.starts_with("'") {
+             self.next = self.next.split_at(1).1;
+             let cdar = try!(self.read(arena));
+             let cdr = LObj::Cons(arena.make(cdar), arena.make(LObj::Nil));
+             return Ok(LObj::Cons(arena.make(LObj::sym("quote")), arena.make(cdr)));
+         }
+         Ok(self.read_atom())
+     }
+}
 
-// impl<'a> Reader<'a> {
-//     fn make_num_or_sym(s: &str) -> LObj {
-//         match s.parse::<i64>() {
-//             Ok(n) => LObj::Num(n),
-//             _ => LObj::Sym(s),
-//         }
-//     }
-// }
+
+struct Evaluator { arena: Arena, genv: LRef}
 
 fn main() {
     loop {
