@@ -246,6 +246,59 @@ impl<'a> Reader<'a> {
 
 struct Evaluator { arena: Arena, genv: LRef}
 
+impl Evaluator {
+     fn new() -> Evaluator {
+         let mut evaluator = Evaluator { arena::new(), genv: LRef(0) };
+         let nil = evaluator.arena.make(LObj::Nil);
+         evaluator.genv = evaluator.arena.make(LObj::Cons(nil.clone(), nil.clone()));
+         for (subr, name) in SubFn::all() {
+             evaluator.add_to_env(LObj::sym(name), LObj::Subr(subr));
+         }
+         evaluator
+     }
+     fn find_var(&self, sym: &LObj, env: LRef) -> Option<LRef> {
+         let mut env = env;
+         while let LObj::Cons(car, cdr) = self.arena.get(&env) {
+             let mut alist = car;
+             while let LObj::Cons(kv, next) = self.arena.get(&alist) {
+                 if let LObj::Cons(ref key, ref val) = self.arena.get(&kv) {
+                     if self.arena.get(key) == *sym {
+                         return Some(val.clone());
+                     }
+                 }
+                 alist = next;
+             }
+             env = cdr;
+         }
+         None
+     }
+     fn add_to_env(&mut self, sym: LObj, val: LObj) {
+         if let LObj::Cons(car, cdr) = self.arena.get(&self.genv) {
+             let sym = self.arena.make(sym);
+             let val = self.arena.make(val);
+             let result = self.arena.make(LObj::Cons(sym, val));
+             let result = self.arena.make(LObj::Cons(result, car));
+             self.arena.set(self.genv.clone(), LObj::Cons(result, cdr));
+         } else {
+             panic!("env must be cons");
+         }
+     }
+     fn eval(&mut self, obj: LObj, env: LRef) -> Result<LObj, String> {
+         return match &obj {
+             &LObj::Nil | &LObj::Num(_) => Ok(obj.clone()),
+             &LObj::Sym(ref name) => {
+                 let ret = match self.find_var(&obj, env) {
+                     Some(bind) => bind,
+                     _ => return Err(format!("{} has no value", name)),
+                 };
+                 Ok(self.arena.get(&ret))
+             },
+             &LObj::Cons(ref f, ref args) => self.apply(f.clone(), args.clone(), env),
+             _ => Ok(LObj::Nil),
+         }
+     }
+}
+
 fn main() {
     loop {
         print!(">> ");
