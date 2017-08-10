@@ -297,6 +297,28 @@ impl Evaluator {
              _ => Ok(LObj::Nil),
          }
      }
+     fn evlis(&mut self, lst: LRef, env: LRef) -> Result<LRef, String> {
+         let mut lst = lst;
+         let mut ret = self.arena.make(LObj::Nil);
+         while let LObj::Cons(car, cdr) = self.arena.get(&lst) {
+             let car = self.arena.get(&car);
+             let elm = try!(self.eval(car, env.clone()));
+             let elm = self.arena.make(elm);
+         }
+     }
+     fn progn(&mut self, body: LRef, env: LRef) -> Result<LObj, String> {
+         let mut body = body;
+         let mut ret = LObj::Nil;
+         while let LObj::Cons(car, cdr) = self.arena.get(&body) {
+             let car = self.arena.get(&car);
+             ret = try!(self.eval(car, env.clone()));
+             body = cdr;
+         }
+         Ok(ret)
+     }
+     fn apply(&mut self, f: LRef, args: LRef, env: LRef) -> Result<LObj, String> {
+
+     }
 }
 
 fn main() {
