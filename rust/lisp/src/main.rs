@@ -1,6 +1,7 @@
 use std::io::Write;
 use std::io;
 use std::collections::HashMap;
+use std::collections::HashSet;
 
 #[derive(Clone, PartialEq, Eq, Hash)]
 struct LRef(i64);
@@ -32,7 +33,7 @@ impl Arena {
             LObj::Num(number) => format!("{}", number),
             LObj::Subr(_) => "<subr>".to_string(),
             LObj::Expr(_, _) => "<expr>".to_string(),
-            LObj::Cons(_, _) => format!("({})", self.to_string(key)),
+            LObj::Cons(_, _) => format!("({})", self.to_list_string(key)),
         }
     }
     fn to_list_string(&self, key: &LRef) -> String {
@@ -181,7 +182,7 @@ impl SubFn {
                      let sum = &arena.make(LObj::Num(f(x, y)));
                      return Self::fold(arena, sum, cddr, f);
                  }
-             }　else {
+             } else {
                  return arena.get(car);
              }
          }
@@ -248,7 +249,7 @@ struct Evaluator { arena: Arena, genv: LRef}
 
 impl Evaluator {
      fn new() -> Evaluator {
-         let mut evaluator = Evaluator { arena::new(), genv: LRef(0) };
+         let mut evaluator = Evaluator { arena: Arena::new(), genv: LRef(0) };
          let nil = evaluator.arena.make(LObj::Nil);
          evaluator.genv = evaluator.arena.make(LObj::Cons(nil.clone(), nil.clone()));
          for (subr, name) in SubFn::all() {
@@ -304,7 +305,10 @@ impl Evaluator {
              let car = self.arena.get(&car);
              let elm = try!(self.eval(car, env.clone()));
              let elm = self.arena.make(elm);
+             ret = self.arena.make(LObj::Cons(elm, ret));
+             lst = cdr;
          }
+         Ok(self.arena.nreverse(ret))
      }
      fn progn(&mut self, body: LRef, env: LRef) -> Result<LObj, String> {
          let mut body = body;
@@ -317,16 +321,65 @@ impl Evaluator {
          Ok(ret)
      }
      fn apply(&mut self, f: LRef, args: LRef, env: LRef) -> Result<LObj, String> {
-
+         if let LObj::Sym(name) = self.arena.get(&f) {
+             match name.as_str() {
+                 "quote" => return Ok(self.arena.get(&args).car(&self.arena)),
+                 "if" => if let LObj::Cons(car, cdr) = self.arena.get(&args) {
+                     let car = self.arena.get(&car);
+                     let ret = match try!(self.eval(car, env.clone())) != LObj::Nil {
+                         true => self.arena.get(&cdr).car(&self.arena),
+                         _ => self.arena.get(&cdr).cdr(&self.arena).car(&self.arena),
+                     };
+                     return self.eval(ret, env);
+                 } else {
+                     return Ok(LObj::Nil);
+                 },
+                 "define" => if let LObj::Cons(car, cdr) = self.arena.get(&args) {
+                     let car = self.arena.get(&car);
+                     self.add_to_env(car.clone(), LObj::Expr(cdr, env));
+                     return Ok(car);
+                 } else {
+                     return Ok(LObj::Nil);
+                 },
+                 _ => {},
+             }
+         }
+         let f = self.arena.get(&f);
+         let f = try!(self.eval(f, env.clone()));
+         let args = try!(self.evlis(args, env.clone()));
+         return Ok(match f {
+             LObj::Subr(subr) => subr.call(&mut self.arena, &args),
+             LObj::Expr(body, env) => match self.arena.get(&body) {
+                 LObj::Cons(car, cdr) => {
+                     let args = self.arena.pairlis(car, args);
+                     let car = self.arena.make(LObj::Cons(args, env));
+                     try!(self.progn(cdr, car))
+                 },
+                 _ => LObj::Nil
+             },
+             _ => return Err("not function".into()),
+         });
      }
 }
 
+fn process(line: &str, evaluator: &mut Evaluator) -> Result<LRef, String> {
+    let obj = try!(Reader{next: &line}.read(&mut evaluator.arena));
+    let env = evaluator.genv.clone();
+    let result = try!(evaluator.eval(obj, env));
+    Ok(evaluator.arena.make(result))
+}
+
 fn main() {
+    let mut evaluator = Evaluator::new();
     loop {
         print!(">> ");
         if let Err(e) = io::stdout().flush() { panic!(e); }
         let mut line = "".to_string();
         if let Err(_) = io::stdin().read_line(&mut line) { break; }
         if line.is_empty() { break; }
+        match process(&line, &mut evaluator) {
+            Ok(obj) => println!("{}", evaluator.arena.to_string(&obj)),
+            Err(e) => println!("<error: {}>", e),
+        };
     }
 }
