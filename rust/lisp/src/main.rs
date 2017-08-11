@@ -245,7 +245,7 @@ impl<'a> Reader<'a> {
 }
 
 
-struct Evaluator { arena: Arena, genv: LRef}
+struct Evaluator { arena: Arena, genv: LRef }
 
 impl Evaluator {
      fn new() -> Evaluator {
