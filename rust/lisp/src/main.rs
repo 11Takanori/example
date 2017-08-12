@@ -41,7 +41,7 @@ impl Arena {
             LObj::Cons(ref car, ref cdr) =>
                 format!("{}{}", self.to_string(car), match self.get(cdr) {
                     LObj::Nil => "".to_string(),
-                    LObj::Cons(_, _) => format!(" {}", self.to_string(cdr)),
+                    LObj::Cons(_, _) => format!(" {}", self.to_list_string(cdr)),
                     _ => format!(" . {}", self.to_string(cdr))
                 }),
             _ => "<internal error>".to_string(),
