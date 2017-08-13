@@ -3,9 +3,10 @@ use std::io;
 use std::collections::HashMap;
 use std::collections::HashSet;
 
-#[derive(Clone, PartialEq, Eq, Hash)]
+#[derive(Clone, PartialEq, Eq, Hash, Debug)]
 struct LRef(i64);
 
+#[derive(Debug)]
 struct Arena {
     last: i64,
     data: HashMap<LRef, LObj>,
@@ -80,11 +81,12 @@ impl Arena {
             }
             break;
         }
+        println!("{:?}", self.data);
         self.nreverse(ret)
     }
 }
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Debug)]
 enum LObj {
     Nil,
     Sym(String),
@@ -115,7 +117,7 @@ impl LObj {
     }
 }
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Debug)]
 enum SubFn {
     Car,
     Cdr,
