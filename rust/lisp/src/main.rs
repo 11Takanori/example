@@ -81,7 +81,6 @@ impl Arena {
             }
             break;
         }
-        println!("{:?}", self.data);
         self.nreverse(ret)
     }
 }
@@ -371,7 +370,19 @@ impl Evaluator {
                         return Ok(LObj::Nil);
                     }
                 }
-                _ => {}
+                "set!" => if let LObj::Cons(sym, val) = self.arena.get(&args) {
+                    let val = self.arena.get(&val).car(&self.arena);
+                    let val = try!(self.eval(val, env.clone()));
+                    let sym = self.arena.get(&sym);
+                    match self.find_var(&sym, env.clone()) {
+                        Some(bind) => self.arena.set(bind, val.clone()),
+                        None => self.add_to_env(sym, val.clone()),
+                    };
+                    return OK(val);
+                } else {
+                    return Ok(LObj::Nil);
+                },
+                _ => {},
             }
         }
         let f = self.arena.get(&f);
