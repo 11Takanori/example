@@ -378,7 +378,7 @@ impl Evaluator {
                         Some(bind) => self.arena.set(bind, val.clone()),
                         None => self.add_to_env(sym, val.clone()),
                     };
-                    return OK(val);
+                    return Ok(val);
                 } else {
                     return Ok(LObj::Nil);
                 },
