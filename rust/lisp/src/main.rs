@@ -263,7 +263,7 @@ impl<'a> Reader<'a> {
     }
 }
 
-
+#[derive(Debug)]
 struct Evaluator {
     arena: Arena,
     genv: LRef,
