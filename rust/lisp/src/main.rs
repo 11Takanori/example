@@ -382,6 +382,7 @@ impl Evaluator {
                 } else {
                     return Ok(LObj::Nil);
                 },
+                "lambda" => return Ok(LObj::Expr(args, env)),
                 _ => {},
             }
         }
