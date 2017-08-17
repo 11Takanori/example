@@ -418,6 +418,19 @@ impl Evaluator {
             _ => {}
         }
     }
+
+    fn garbage_collect(&mut self) {
+        let mut unused = HashSet::new();
+        for key in self.arena.data.keys() {
+            unused.insert(key.clone());
+        }
+
+        let env = self.genv.clone();
+        self.mark(env, &mut unused);
+        for key in unused {
+            self.arena.data.remove(&key);
+        }
+    }
 }
 
 fn process(line: &str, evaluator: &mut Evaluator) -> Result<LRef, String> {
@@ -445,5 +458,6 @@ fn main() {
             Ok(obj) => println!("{}", evaluator.arena.to_string(&obj)),
             Err(e) => println!("<error: {}>", e),
         };
+        evaluator.garbage_collect();
     }
 }
