@@ -370,20 +370,22 @@ impl Evaluator {
                         return Ok(LObj::Nil);
                     }
                 }
-                "set!" => if let LObj::Cons(sym, val) = self.arena.get(&args) {
-                    let val = self.arena.get(&val).car(&self.arena);
-                    let val = try!(self.eval(val, env.clone()));
-                    let sym = self.arena.get(&sym);
-                    match self.find_var(&sym, env.clone()) {
-                        Some(bind) => self.arena.set(bind, val.clone()),
-                        None => self.add_to_env(sym, val.clone()),
-                    };
-                    return Ok(val);
-                } else {
-                    return Ok(LObj::Nil);
-                },
+                "set!" => {
+                    if let LObj::Cons(sym, val) = self.arena.get(&args) {
+                        let val = self.arena.get(&val).car(&self.arena);
+                        let val = try!(self.eval(val, env.clone()));
+                        let sym = self.arena.get(&sym);
+                        match self.find_var(&sym, env.clone()) {
+                            Some(bind) => self.arena.set(bind, val.clone()),
+                            None => self.add_to_env(sym, val.clone()),
+                        };
+                        return Ok(val);
+                    } else {
+                        return Ok(LObj::Nil);
+                    }
+                }
                 "lambda" => return Ok(LObj::Expr(args, env)),
-                _ => {},
+                _ => {}
             }
         }
         let f = self.arena.get(&f);
@@ -403,6 +405,18 @@ impl Evaluator {
             }
             _ => return Err("not function".into()),
         });
+    }
+    fn mark(&mut self, target: LRef, unused: &mut HashSet<LRef>) {
+        if !unused.remove(&target) {
+            return;
+        }
+        match self.arena.get(&target) {
+            LObj::Expr(a, b) | LObj::Cons(a, b) => {
+                self.mark(a, unused);
+                self.mark(b, unused);
+            }
+            _ => {}
+        }
     }
 }
 
