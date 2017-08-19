@@ -1,5 +1,4 @@
-use std::io::Write;
-use std::io;
+use std::io::{self, BufRead, Write};
 use std::collections::HashMap;
 use std::collections::HashSet;
 
@@ -463,19 +462,16 @@ fn process(line: &str, evaluator: &mut Evaluator) -> Result<LRef, String> {
 }
 
 fn main() {
+    let stdin = io::stdin();
     let mut evaluator = Evaluator::new();
+
     loop {
         print!(">> ");
-        if let Err(e) = io::stdout().flush() {
-            panic!(e);
-        }
-        let mut line = "".to_string();
-        if let Err(_) = io::stdin().read_line(&mut line) {
-            break;
-        }
-        if line.is_empty() {
-            break;
-        }
+        io::stdout().flush().expect("Error flushing stdout");
+
+        let mut line = String::new();
+        stdin.lock().read_line(&mut line).expect("Error reading from stdin");
+
         match process(&line, &mut evaluator) {
             Ok(obj) => println!("{}", evaluator.arena.to_string(&obj)),
             Err(e) => println!("<error: {}>", e),
