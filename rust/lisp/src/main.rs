@@ -19,20 +19,24 @@ impl Arena {
             data: HashMap::new(),
         }
     }
+
     fn get(&self, key: &LRef) -> LObj {
         match self.data.get(&key) {
             Some(val) => val.clone(),
             _ => LObj::Nil,
         }
     }
+
     fn set(&mut self, key: LRef, val: LObj) {
         self.data.insert(key, val);
     }
+
     fn make(&mut self, obj: LObj) -> LRef {
         self.last += 1;
         self.data.insert(LRef(self.last), obj);
         LRef(self.last)
     }
+
     fn to_string(&self, key: &LRef) -> String {
         match self.get(key) {
             LObj::Nil => "nil".to_string(),
@@ -43,6 +47,7 @@ impl Arena {
             LObj::Cons(_, _) => format!("({})", self.to_list_string(key)),
         }
     }
+
     fn to_list_string(&self, key: &LRef) -> String {
         match self.get(key) {
             LObj::Cons(ref car, ref cdr) => {
@@ -57,6 +62,7 @@ impl Arena {
             _ => "<internal error>".to_string(),
         }
     }
+
     fn nreverse(&mut self, lst: LRef) -> LRef {
         let mut lst = lst;
         let mut ret = self.make(LObj::Nil);
@@ -67,6 +73,7 @@ impl Arena {
         }
         ret
     }
+
     fn pairlis(&mut self, lst1: LRef, lst2: LRef) -> LRef {
         let mut lst1 = lst1;
         let mut lst2 = lst2;
@@ -99,15 +106,18 @@ impl LObj {
     fn sym(s: &str) -> LObj {
         LObj::Sym(s.into())
     }
+
     fn t() -> LObj {
         LObj::sym("t")
     }
+
     fn car(&self, arena: &Arena) -> LObj {
         match self {
             &LObj::Cons(ref x, _) => arena.get(x),
             _ => LObj::Nil,
         }
     }
+
     fn cdr(&self, arena: &Arena) -> LObj {
         match self {
             &LObj::Cons(_, ref x) => arena.get(x),
@@ -176,6 +186,7 @@ impl SubFn {
         }
         LObj::Nil
     }
+
     fn all() -> Vec<(SubFn, &'static str)> {
         vec![
              (SubFn::Car, "car"),
@@ -193,6 +204,7 @@ impl SubFn {
              (SubFn::T, "t"),
             ]
     }
+
     fn fold(arena: &mut Arena, car: &LRef, cdr: &LRef, f: &Fn(i64, i64) -> i64) -> LObj {
         if let LObj::Num(x) = arena.get(car) {
             if let LObj::Cons(ref cdar, ref cddr) = arena.get(cdr) {
@@ -219,6 +231,7 @@ impl<'a> Reader<'a> {
             _ => LObj::sym(s),
         }
     }
+
     fn read_atom(&mut self) -> LObj {
         let (atom, next) = match self.next
             .find(|c: char| c == '(' || c == ')' || c == '\'' || c.is_whitespace()) {
@@ -228,6 +241,7 @@ impl<'a> Reader<'a> {
         self.next = next;
         Self::make_num_or_sym(atom)
     }
+
     fn read_list(&mut self, arena: &mut Arena) -> Result<LObj, String> {
         let mut ret = LObj::Nil;
         loop {
@@ -244,6 +258,7 @@ impl<'a> Reader<'a> {
             ret = LObj::Cons(arena.make(car), arena.make(ret));
         }
     }
+
     fn read(&mut self, arena: &mut Arena) -> Result<LObj, String> {
         self.next = self.next.trim_left();
         if self.next.is_empty() {
@@ -282,6 +297,7 @@ impl Evaluator {
         }
         evaluator
     }
+
     fn find_var(&self, sym: &LObj, env: LRef) -> Option<LRef> {
         let mut env = env;
         while let LObj::Cons(car, cdr) = self.arena.get(&env) {
@@ -298,6 +314,7 @@ impl Evaluator {
         }
         None
     }
+
     fn add_to_env(&mut self, sym: LObj, val: LObj) {
         if let LObj::Cons(car, cdr) = self.arena.get(&self.genv) {
             let sym = self.arena.make(sym);
@@ -309,6 +326,7 @@ impl Evaluator {
             panic!("env must be cons");
         }
     }
+
     fn eval(&mut self, obj: LObj, env: LRef) -> Result<LObj, String> {
         return match &obj {
             &LObj::Nil | &LObj::Num(_) => Ok(obj.clone()),
@@ -323,6 +341,7 @@ impl Evaluator {
             _ => Ok(LObj::Nil),
         };
     }
+
     fn evlis(&mut self, lst: LRef, env: LRef) -> Result<LRef, String> {
         let mut lst = lst;
         let mut ret = self.arena.make(LObj::Nil);
@@ -335,6 +354,7 @@ impl Evaluator {
         }
         Ok(self.arena.nreverse(ret))
     }
+
     fn progn(&mut self, body: LRef, env: LRef) -> Result<LObj, String> {
         let mut body = body;
         let mut ret = LObj::Nil;
@@ -345,6 +365,7 @@ impl Evaluator {
         }
         Ok(ret)
     }
+
     fn apply(&mut self, f: LRef, args: LRef, env: LRef) -> Result<LObj, String> {
         if let LObj::Sym(name) = self.arena.get(&f) {
             match name.as_str() {
@@ -406,6 +427,7 @@ impl Evaluator {
             _ => return Err("not function".into()),
         });
     }
+
     fn mark(&mut self, target: LRef, unused: &mut HashSet<LRef>) {
         if !unused.remove(&target) {
             return;
