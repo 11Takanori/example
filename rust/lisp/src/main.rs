@@ -291,9 +291,7 @@ impl Evaluator {
         };
         let nil = evaluator.arena.make(LObj::Nil);
         evaluator.genv = evaluator.arena.make(LObj::Cons(nil.clone(), nil.clone()));
-        for (subr, name) in SubFn::all() {
-            evaluator.add_to_env(LObj::sym(name), LObj::Subr(subr));
-        }
+        evaluator.define_sub_fn();
         evaluator
     }
 
@@ -323,6 +321,12 @@ impl Evaluator {
             self.arena.set(self.genv.clone(), LObj::Cons(result, cdr));
         } else {
             panic!("env must be cons");
+        }
+    }
+
+    fn define_sub_fn(&mut self) {
+        for (subr, name) in SubFn::all() {
+            self.add_to_env(LObj::sym(name), LObj::Subr(subr));
         }
     }
 
