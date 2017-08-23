@@ -5,7 +5,7 @@ class SimpleWriter
 
   def write_line(line)
     @file.print(line)
-    @file.print('\n')
+    @file.print("\n")
   end
 
   def pos
@@ -52,4 +52,5 @@ f = SimpleWriter.new('file1.txt')
 f.extend TimeStampingWriter
 f.extend NumberingWriter
 f.write_line('hello')
+f.write_line('Hi!')
 f.close
