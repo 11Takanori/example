@@ -8,14 +8,6 @@ class SimpleWriter
     @file.print("\n")
   end
 
-  def pos
-    @file.pos
-  end
-
-  def rewind
-    @file.rewind
-  end
-
   def close
     @file.close
   end
@@ -35,6 +27,7 @@ end
 
 module NumberingWriter
   attr_reader :line_number
+
   def write_line(line)
     @line_number = 1 unless @line_number
     super("#{@line_number} : #{line}")
@@ -49,8 +42,8 @@ module TimeStampingWriter
 end
 
 f = SimpleWriter.new('file1.txt')
-f.extend TimeStampingWriter
-f.extend NumberingWriter
+f.extend(TimeStampingWriter)
+f.extend(NumberingWriter)
 f.write_line('hello')
 f.write_line('Hi!')
 f.close
