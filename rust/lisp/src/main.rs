@@ -140,47 +140,67 @@ enum SubFn {
     Div,
     Mod,
     T,
+    Set,
 }
 
 impl SubFn {
-    fn call(&self, arena: &mut Arena, args: &LRef) -> LObj {
-        if let LObj::Cons(ref car, ref cdr) = arena.get(args) {
-            let cdar = arena.get(cdr).car(&arena);
-            let cdar = arena.make(cdar);
+    fn call(&self, evaluator: &mut Evaluator, args: &LRef) -> LObj {
+        if let LObj::Cons(ref car, ref cdr) = evaluator.arena.get(args) {
+            let cdar = evaluator.arena.get(cdr).car(&evaluator.arena);
+            let cdar = evaluator.arena.make(cdar);
             return match *self {
-                SubFn::Car => arena.get(car).car(&arena),
-                SubFn::Cdr => arena.get(car).cdr(&arena),
+                SubFn::Car => evaluator.arena.get(car).car(&evaluator.arena),
+                SubFn::Cdr => evaluator.arena.get(car).cdr(&evaluator.arena),
                 SubFn::Cons => LObj::Cons(car.clone(), cdar),
                 SubFn::Eq => {
-                    match arena.get(car) == arena.get(&cdar) {
+                    match evaluator.arena.get(car) == evaluator.arena.get(&cdar) {
                         true => LObj::t(),
                         _ => LObj::Nil,
                     }
                 }
                 SubFn::Atom => {
-                    match arena.get(car) {
+                    match evaluator.arena.get(car) {
                         LObj::Cons(_, _) => LObj::Nil,
                         _ => LObj::t(),
                     }
                 }
                 SubFn::Numberp => {
-                    match arena.get(car) {
+                    match evaluator.arena.get(car) {
                         LObj::Num(_) => LObj::t(),
                         _ => LObj::Nil,
                     }
                 }
                 SubFn::Symbolp => {
-                    match arena.get(car) {
+                    match evaluator.arena.get(car) {
                         LObj::Num(_) => LObj::t(),
                         _ => LObj::Nil,
                     }
                 }
-                SubFn::Add => Self::fold(arena, car, cdr, &|x, y| x + y),
-                SubFn::Sub => Self::fold(arena, car, cdr, &|x, y| x - y),
-                SubFn::Mul => Self::fold(arena, car, cdr, &|x, y| x * y),
-                SubFn::Div => Self::fold(arena, car, cdr, &|x, y| x / y),
-                SubFn::Mod => Self::fold(arena, car, cdr, &|x, y| x % y),
+                SubFn::Add => Self::fold(&mut evaluator.arena, car, cdr, &|x, y| x + y),
+                SubFn::Sub => Self::fold(&mut evaluator.arena, car, cdr, &|x, y| x - y),
+                SubFn::Mul => Self::fold(&mut evaluator.arena, car, cdr, &|x, y| x * y),
+                SubFn::Div => Self::fold(&mut evaluator.arena, car, cdr, &|x, y| x / y),
+                SubFn::Mod => Self::fold(&mut evaluator.arena, car, cdr, &|x, y| x % y),
                 SubFn::T => LObj::t(),
+                SubFn::Set => {
+                    let genv = evaluator.genv.clone();
+                    if let LObj::Cons(sym, val) = evaluator.arena.get(&args) {
+                        let val = evaluator.arena.get(&val).car(&evaluator.arena);
+                        let val = evaluator.eval(val, genv.clone()).unwrap();
+                        // let val = try!(evaluator.eval(val, genv.clone()));
+
+                        println!("{:?}", val);
+                        // let sym = evaluator.arena.get(&sym);
+                        // match evaluator.find_var(&sym, genv.clone()) {
+                        //     Some(bind) => evaluator.arena.set(bind, val.clone()),
+                        //     None => evaluator.add_to_env(sym, val.clone()),
+                        // };
+                        // return val;
+                        return LObj::Nil;
+                    } else {
+                        return LObj::Nil;
+                    }
+                }
             };
         }
         LObj::Nil
@@ -201,6 +221,7 @@ impl SubFn {
              (SubFn::Div, "/"),
              (SubFn::Mod, "mod"),
              (SubFn::T, "t"),
+             (SubFn::Set, "set!"),
             ]
     }
 
@@ -331,18 +352,22 @@ impl Evaluator {
     }
 
     fn eval(&mut self, obj: LObj, env: LRef) -> Result<LObj, String> {
-        return match &obj {
-            &LObj::Nil | &LObj::Num(_) => Ok(obj.clone()),
-            &LObj::Sym(ref name) => {
-                let ret = match self.find_var(&obj, env) {
-                    Some(bind) => bind,
-                    _ => return Err(format!("{} has no value", name)),
-                };
-                Ok(self.arena.get(&ret))
-            }
-            &LObj::Cons(ref f, ref args) => self.apply(f.clone(), args.clone(), env),
-            _ => Ok(LObj::Nil),
-        };
+        println!("{:?}", obj);
+        // println!("{:?}", env);
+        // return match &obj {
+        //     &LObj::Nil | &LObj::Num(_) => Ok(obj.clone()),
+        //     &LObj::Sym(ref name) => {
+        //         let ret = match self.find_var(&obj, env) {
+        //             Some(bind) => bind,
+        //             _ => return Err(format!("{} has no value", name)),
+        //         };
+        //         Ok(self.arena.get(&ret))
+        //     }
+        //     &LObj::Cons(ref f, ref args) => self.apply(f.clone(), args.clone(), env),
+        //     _ => Ok(LObj::Nil),
+        // };
+
+        Ok(LObj::Nil)
     }
 
     fn evlis(&mut self, lst: LRef, env: LRef) -> Result<LRef, String> {
@@ -394,20 +419,20 @@ impl Evaluator {
                         return Ok(LObj::Nil);
                     }
                 }
-                "set!" => {
-                    if let LObj::Cons(sym, val) = self.arena.get(&args) {
-                        let val = self.arena.get(&val).car(&self.arena);
-                        let val = try!(self.eval(val, env.clone()));
-                        let sym = self.arena.get(&sym);
-                        match self.find_var(&sym, env.clone()) {
-                            Some(bind) => self.arena.set(bind, val.clone()),
-                            None => self.add_to_env(sym, val.clone()),
-                        };
-                        return Ok(val);
-                    } else {
-                        return Ok(LObj::Nil);
-                    }
-                }
+                // "set!" => {
+                //     if let LObj::Cons(sym, val) = self.arena.get(&args) {
+                //         let val = self.arena.get(&val).car(&self.arena);
+                //         let val = try!(self.eval(val, env.clone()));
+                //         let sym = self.arena.get(&sym);
+                //         match self.find_var(&sym, env.clone()) {
+                //             Some(bind) => self.arena.set(bind, val.clone()),
+                //             None => self.add_to_env(sym, val.clone()),
+                //         };
+                //         return Ok(val);
+                //     } else {
+                //         return Ok(LObj::Nil);
+                //     }
+                // }
                 "lambda" => return Ok(LObj::Expr(args, env)),
                 _ => {}
             }
@@ -416,7 +441,7 @@ impl Evaluator {
         let f = try!(self.eval(f, env.clone()));
         let args = try!(self.evlis(args, env.clone()));
         return Ok(match f {
-            LObj::Subr(subr) => subr.call(&mut self.arena, &args),
+            LObj::Subr(subr) => subr.call(self, &args),
             LObj::Expr(body, env) => {
                 match self.arena.get(&body) {
                     LObj::Cons(car, cdr) => {
@@ -463,6 +488,7 @@ fn process(line: &str, evaluator: &mut Evaluator) -> Result<LRef, String> {
     let env = evaluator.genv.clone();
     let result = try!(evaluator.eval(obj, env));
     Ok(evaluator.arena.make(result))
+    // Ok(LRef(0))
 }
 
 fn main() {
