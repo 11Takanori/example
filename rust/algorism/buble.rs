@@ -1,17 +1,16 @@
 fn main() {
     let mut v = vec![5, 2, 3, 1, 4];
     let mut i = 0;
-    let mut swap_flg = false;
     let limit = v.len() - 1;
+    let mut last = limit;
 
     while i < limit {
-        for j in 0..v.len()-i-1 {
+        for j in 0..last {
             if v[j] > v[j+1] {
                 v.swap(j, j+1);
-                swap_flg = true;
+                last = j;
             }
         }
-        if swap_flg == false { break; }
         i += 1;
     }
 
