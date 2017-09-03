@@ -1,6 +1,10 @@
 fn main() {
     let mut v = vec![5, 2, 3, 1, 4];
-    let mut h = v.len() / 2;
+    let mut h = 1;
+
+    while h < v.len() / 9 {
+        h = h * 3 + 1;
+    }
 
     while h > 0 {
         for i in h..v.len() {
@@ -12,7 +16,7 @@ fn main() {
             }
             v[j] = tmp;
         }
-        h /= 2;
+        h /= 3;
     }
 
     println!("{:?}", v);
