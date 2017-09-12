@@ -1,5 +1,5 @@
 use std::rc::Rc;
-use std::cell::RefCell;
+use std::cell::{Ref, RefMut, RefCell};
 
 pub struct List<T> {
     head: Link<T>,
@@ -58,11 +58,17 @@ impl<T> List<T> {
             Rc::try_unwrap(old_head).ok().unwrap().into_inner().elem
         })
     }
+
+    pub fn peek_front(&self) -> Option<Ref<T>> {
+        self.head.as_ref().map(|node| {
+            Ref::map(node.borrow(), |node| &node.elem)
+        })
+    }
 }
 
 impl<T> Drop for List<T> {
      fn drop(&mut self) {
-         while self.pop_front.is_some() {}
+         while self.pop_front().is_some() {}
      }
 }
 
