@@ -101,7 +101,7 @@ impl<T> List<T> {
         })
     }
 
-    pub fn peek_back(arg: Type) -> Option<Ref<T>> {
+    pub fn peek_back(&self) -> Option<Ref<T>> {
         self.tail.as_ref().map(|node| {
             Ref::map(node.borrow(), |node| &node.elem)
         })
@@ -145,6 +145,25 @@ mod test {
 
         assert_eq!(list.pop_front(), Some(1));
         assert_eq!(list.pop_front(), None);
+
+
+        assert_eq!(list.pop_back(), None);
+
+        list.push_back(1);
+        list.push_back(2);
+        list.push_back(3);
+
+        assert_eq!(list.pop_back(), Some(3));
+        assert_eq!(list.pop_back(), Some(2));
+
+        list.push_back(4);
+        list.push_back(5);
+
+        assert_eq!(list.pop_back(), Some(5));
+        assert_eq!(list.pop_back(), Some(4));
+
+        assert_eq!(list.pop_back(), Some(1));
+        assert_eq!(list.pop_back(), None);
     }
 
     #[test]
