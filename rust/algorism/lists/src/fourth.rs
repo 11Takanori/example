@@ -127,10 +127,10 @@ impl<T> Drop for List<T> {
 }
 
 impl<T> Iterator for IntoIter<T> {
-     type Item = T;
-     fn next(&mut self) -> Option<T> {
-         self.0.pop_front();
-     }
+    type Item = T;
+    fn next(&mut self) -> Option<T> {
+        self.0.pop_front()
+    }
 }
 
 impl<T> DoubleEndedIterator for IntoIter<T> {
@@ -194,6 +194,21 @@ mod test {
         list.push_front(3);
 
         assert_eq!(&*list.peek_front().unwrap(), &3);
+    }
+
+    #[test]
+    fn into_iter() {
+        let mut list = List::new();
+        list.push_front(1);
+        list.push_front(2);
+        list.push_front(3);
+
+        let mut iter = list.into_iter();
+        assert_eq!(iter.next(), Some(3));
+        assert_eq!(iter.next_back(), Some(1));
+        assert_eq!(iter.next(), Some(2));
+        assert_eq!(iter.next_back(), None);
+        assert_eq!(iter.next(), None);
     }
 }
 
