@@ -1,6 +1,6 @@
-pub struct List<'a, T: 'a> {
+pub struct List<T> {
     head: Link<T>,
-    tail: Option<&'a mut Node<T>>,
+    tail: *mut Node<T>,
 }
 
 type Link<T> = Option<Box<Node<T>>>;
@@ -47,4 +47,31 @@ impl<'a, T> List<'a, T> {
              head.elem
          })
      }
+}
+
+#[cfg(test)]
+mod test {
+    use super::List;
+    #[test]
+    fn basics() {
+        let mut list = List::new();
+
+        assert_eq!(list.pop(), None);
+
+        list.push(1);
+        list.push(2);
+        list.push(3);
+
+        assert_eq!(list.pop(), Some(1));
+        assert_eq!(list.pop(), Some(2));
+
+        list.push(4);
+        list.push(5);
+
+        assert_eq!(list.pop(), Some(3));
+        assert_eq!(list.pop(), Some(4));
+
+        assert_eq!(list.pop(), Some(5));
+        assert_eq!(list.pop(), None);
+    }
 }
