@@ -1,3 +1,5 @@
+use std::ptr;
+
 pub struct List<T> {
     head: Link<T>,
     tail: *mut Node<T>,
