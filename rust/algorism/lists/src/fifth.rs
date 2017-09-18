@@ -12,6 +12,16 @@ struct Node<T> {
     next: Link<T>,
 }
 
+pub struct IntoIter<T>(List<T>);
+
+pub struct Iter<'a, T:'a> {
+    next: Option<&'a Node<T>>,
+}
+
+pub struct IterMut<'a, T: 'a> {
+    next: Option<&'a mut Node<T>>,
+}
+
 impl<'a, T> List<'a, T> {
      pub fn new() -> Self {
          List { head: None, tail: None }
