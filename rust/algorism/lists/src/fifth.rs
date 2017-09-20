@@ -22,7 +22,7 @@ pub struct IterMut<'a, T: 'a> {
     next: Option<&'a mut Node<T>>,
 }
 
-impl<'a, T> List<'a, T> {
+impl<T> List<T> {
      pub fn new() -> Self {
          List { head: None, tail: None }
      }
