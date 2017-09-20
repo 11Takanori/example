@@ -24,7 +24,7 @@ pub struct IterMut<'a, T: 'a> {
 
 impl<T> List<T> {
      pub fn new() -> Self {
-         List { head: None, tail: None }
+         List { head: None, tail: ptr::null_mut() }
      }
 
      pub fn push(&'a mut self, elem: T) {
