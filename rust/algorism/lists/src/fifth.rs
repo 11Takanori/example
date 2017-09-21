@@ -23,11 +23,12 @@ pub struct IterMut<'a, T: 'a> {
 }
 
 impl<T> List<T> {
-     pub fn new() -> Self {
-         List { head: None, tail: ptr::null_mut() }
-     }
 
-     pub fn push(&mut self, elem: T) {
+    pub fn new() -> Self {
+        List { head: None, tail: ptr::null_mut() }
+    }
+
+    pub fn push(&mut self, elem: T) {
         let mut new_tail = Box::new(Node {
             elem: elem,
             next: None,
@@ -46,18 +47,18 @@ impl<T> List<T> {
         self.tail = raw_tail;
     }
 
-     pub fn pop(&mut self) -> Option<T> {
-         self.head.take().map(|head| {
-             let head = *head;
-             self.head = head.next;
+    pub fn pop(&mut self) -> Option<T> {
+        self.head.take().map(|head| {
+            let head = *head;
+            self.head = head.next;
 
-             if self.head.is_none() {
-                 self.tail = None;
-             }
+            if self.head.is_none() {
+                self.tail = ptr::null_mut();
+            }
 
-             head.elem
-         })
-     }
+            head.elem
+        })
+    }
 }
 
 #[cfg(test)]
@@ -83,6 +84,13 @@ mod test {
         assert_eq!(list.pop(), Some(4));
 
         assert_eq!(list.pop(), Some(5));
+        assert_eq!(list.pop(), None);
+
+        list.push(6);
+        list.push(7);
+
+        assert_eq!(list.pop(), Some(6));
+        assert_eq!(list.pop(), Some(7));
         assert_eq!(list.pop(), None);
     }
 }
