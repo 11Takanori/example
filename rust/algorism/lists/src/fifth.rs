@@ -71,6 +71,18 @@ impl<T> List<T> {
             &mut node.elem
         })
     }
+
+    pub fn into_iter(self) -> IntoIter<T> {
+        IntoIter(self)
+    }
+
+    pub fn iter(&self) -> Iter<T> {
+        Iter { next: self.head.as_ref().map(|node| &**node) }
+    }
+
+    pub fn iter_mut(&mut self) -> IterMut<T> {
+        IterMut { next: self.head.as_mut().map(|node| &mut **node) }
+    }
 }
 
 #[cfg(test)]
