@@ -14,7 +14,7 @@ struct Node<T> {
 
 pub struct IntoIter<T>(List<T>);
 
-pub struct Iter<'a, T:'a> {
+pub struct Iter<'a, T: 'a> {
     next: Option<&'a Node<T>>,
 }
 
@@ -23,9 +23,11 @@ pub struct IterMut<'a, T: 'a> {
 }
 
 impl<T> List<T> {
-
     pub fn new() -> Self {
-        List { head: None, tail: ptr::null_mut() }
+        List {
+            head: None,
+            tail: ptr::null_mut(),
+        }
     }
 
     pub fn push(&mut self, elem: T) {
@@ -61,15 +63,11 @@ impl<T> List<T> {
     }
 
     pub fn peek(&self) -> Option<&T> {
-        self.head.as_ref().map(|node| {
-            &node.elem
-        })
+        self.head.as_ref().map(|node| &node.elem)
     }
 
     pub fn peek_mut(&mut self) -> Option<&mut T> {
-        self.head.as_mut().map(|node| {
-            &mut node.elem
-        })
+        self.head.as_mut().map(|node| &mut node.elem)
     }
 
     pub fn into_iter(self) -> IntoIter<T> {

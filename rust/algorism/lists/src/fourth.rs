@@ -17,19 +17,22 @@ struct Node<T> {
 pub struct IntoIter<T>(List<T>);
 
 impl<T> Node<T> {
-     fn new(elem: T) -> Rc<RefCell<Self>> {
-         Rc::new(RefCell::new(Node {
-             elem: elem,
-             prev: None,
-             next: None,
-         }))
-     }
+    fn new(elem: T) -> Rc<RefCell<Self>> {
+        Rc::new(RefCell::new(Node {
+            elem: elem,
+            prev: None,
+            next: None,
+        }))
+    }
 }
 
 impl<T> List<T> {
-     pub fn new() -> Self {
-         List { head: None, tail: None }
-     }
+    pub fn new() -> Self {
+        List {
+            head: None,
+            tail: None,
+        }
+    }
 
     pub fn push_front(&mut self, elem: T) {
         let new_head = Node::new(elem);
@@ -92,27 +95,19 @@ impl<T> List<T> {
     }
 
     pub fn peek_front(&self) -> Option<Ref<T>> {
-        self.head.as_ref().map(|node| {
-            Ref::map(node.borrow(), |node| &node.elem)
-        })
+        self.head.as_ref().map(|node| Ref::map(node.borrow(), |node| &node.elem))
     }
 
     pub fn peek_front_mut(&mut self) -> Option<RefMut<T>> {
-        self.head.as_ref().map(|node| {
-            RefMut::map(node.borrow_mut(), |node| &mut node.elem)
-        })
+        self.head.as_ref().map(|node| RefMut::map(node.borrow_mut(), |node| &mut node.elem))
     }
 
     pub fn peek_back(&self) -> Option<Ref<T>> {
-        self.tail.as_ref().map(|node| {
-            Ref::map(node.borrow(), |node| &node.elem)
-        })
+        self.tail.as_ref().map(|node| Ref::map(node.borrow(), |node| &node.elem))
     }
 
     pub fn peek_back_mut(&mut self) -> Option<RefMut<T>> {
-        self.tail.as_ref().map(|node| {
-            RefMut::map(node.borrow_mut(), |node| &mut node.elem)
-        })
+        self.tail.as_ref().map(|node| RefMut::map(node.borrow_mut(), |node| &mut node.elem))
     }
 
     pub fn into_iter(self) -> IntoIter<T> {
@@ -121,9 +116,9 @@ impl<T> List<T> {
 }
 
 impl<T> Drop for List<T> {
-     fn drop(&mut self) {
-         while self.pop_front().is_some() {}
-     }
+    fn drop(&mut self) {
+        while self.pop_front().is_some() {}
+    }
 }
 
 impl<T> Iterator for IntoIter<T> {
@@ -134,9 +129,9 @@ impl<T> Iterator for IntoIter<T> {
 }
 
 impl<T> DoubleEndedIterator for IntoIter<T> {
-     fn next_back(&mut self) -> Option<T> {
-         self.0.pop_back()
-     }
+    fn next_back(&mut self) -> Option<T> {
+        self.0.pop_back()
+    }
 }
 
 #[cfg(test)]
@@ -211,4 +206,3 @@ mod test {
         assert_eq!(iter.next(), None);
     }
 }
-
