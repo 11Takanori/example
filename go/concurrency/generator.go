@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"sync"
 )
 
 func main() {
@@ -21,6 +22,25 @@ func main() {
 			}
 		}()
 		return valueStream
+	}
+
+	fanIn := func(
+		done <-chan interface{},
+		channels ...<-chan interface{},
+	) <-chan interface{} {
+		var wg sync.WaitGroup
+		multiplexedStream := make(chan interface{})
+
+		maltiplex := func(c <-chan interface{}) {
+			defer wg.Done()
+			for i := range c {
+				select {
+				case <-done:
+					return
+				case multiplexedStream <- i:
+				}
+			}
+		}
 	}
 
 	done := make(chan interface{})
