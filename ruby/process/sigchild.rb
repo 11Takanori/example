@@ -7,14 +7,24 @@ child_processes.times do
   end
 end
 
-trap(:CHLD) do
-  puts Process.wait
-  dead_processes += 1
+# $stdoutの出力を同期モードにする
+# putsを呼び出した後にシグナルハンドラが中断された場合にはThreadError例外が送出されるようになる
+$stdout.sync = true
 
-  exit if dead_processes == child_processes
+trap(:CHLD) do
+  begin
+    # waitの第２引数に`Process::WNOHANG`を渡すことで、
+    # 終了を待つ子プロセスが無ければブロックしないようにカーネルに指示する
+    while pid = Process.wait(-1, Process::WNOHANG)
+      puts pid
+      dead_processes += 1
+    end
+  rescue Errno::ECHILD
+  end
 end
 
 loop do
-  (Math.sqrt(rand(44)) ** 8).floor
+  exit if dead_processes == child_processes
+
   sleep 1
 end
