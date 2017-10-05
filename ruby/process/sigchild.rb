@@ -20,6 +20,7 @@ trap(:CHLD) do
       dead_processes += 1
     end
   rescue Errno::ECHILD
+    # 待つべき子プロセスが存在しない場合
   end
 end
 
