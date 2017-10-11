@@ -1,6 +1,6 @@
 require 'socket'
 
-child_socket, parent_socket = Socket.pair(:UNIX, :DGRAM, 0)
+child_socket, parent_socket = Socket.pair(:UNIX, :DGRAM, 0) #ドメイン, タイプ, プロトコル
 maxlen = 1000
 
 fork do
