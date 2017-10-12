@@ -75,4 +75,10 @@ hash.set('hoge', 'fuga')
 p hash.get('foo')
 p hash.get('hoge')
 
-hash.each {|k, v| p k; p v}
+# hash.each {|k, v| p k; p v}
+
+# list = List.new
+# p list.unshift(1)
+# p list.unshift(2)
+# p list.unshift(3)
+# p list.each {|k, v| p k; p v}
