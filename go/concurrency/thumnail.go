@@ -6,7 +6,7 @@ import (
 	"sync"
 )
 
-func makeThumnails(filenames <-chan string) int64 {
+func makeThumnails6(filenames <-chan string) int64 {
 	seies := make(chan int64)
 	var wg sync.WaitGroup
 	for f := range filenames {
@@ -33,4 +33,12 @@ func makeThumnails(filenames <-chan string) int64 {
 		total += size
 	}
 	return total
+}
+
+func makeThumnails(filenames []string) {
+	for _, f := range filenames {
+		if _, err := thumbnail.ImageFile(f); err != nil {
+			log.Println(err)
+		}
+	}
 }
