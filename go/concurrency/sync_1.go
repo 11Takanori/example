@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	var wg = sync.WaitGroup
+	var wg sync.WaitGroup
 	for _, salutation := range []string{"hello", "greeting", "good day"} {
 		wg.Add(1)
 		go func() {
