@@ -24,3 +24,9 @@
       (let [velocity (or (:velocity this) 64)]
         (.noteOn midi-channel (key-number this) velocity)
         (Thread/sleep (to-msec this tempo)))))
+
+(defn perform [notes & {:keys [temp] :or {tempo 120}}]
+  (with-open [synth (doto (MidiSystem/getSynthesizer) .open)]
+    (let [channel (aget (.getChannels synth) 0)]
+      (doseq [note notes]
+        (play note tempo channel)))))
