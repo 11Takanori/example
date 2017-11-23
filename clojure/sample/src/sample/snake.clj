@@ -1,7 +1,7 @@
 (ns reader.sanke
   (:import (java.awt Color Dimension)
            (javax.swing JPanel JFrame Timer JOptionPane)
-           (java.awt.event ActionListener KeyListner))
+           (java.awt.event ActionListener KeyListener))
   (:use examples.import-static))
 (import-static java.awt.event.KeyEvent VK_LEFT VK_RIGHT VK_UP VK_DOWN)
 
@@ -20,7 +20,7 @@
 
 (defn point-to-screen-rect [pt]
   (map #(* point-size %)
-    [(pt 0) (pt 1) 1 1]))
+       [(pt 0) (pt 1) 1 1]))
 
 (defn create-apple []
   {:location [(rand-int width) (rand-int height)]
@@ -39,3 +39,27 @@
 
 (defn win? [{body :body}]
   (>= (count body) win-length))
+
+(defn head-overlaps-body? [{[head & body] :body}]
+  (contains? (set body) head))
+
+(defn eats? [{[snake-head] :body} {apple :location}]
+  (= snake-head apple))
+
+(defn turn [snake newdir]
+  (assoc snake :dir newdir))
+
+(defn reset-game [snake apple]
+  (dosync (ref-set apple (create-apple))
+          (ref-set snake (create-snake))))
+
+(defn update-direction [snake newdir]
+  (when newdir (dosync (alter snake turn newdir))))
+
+(defn update-positions [snake apple]
+  (dosync
+    (if (eats? @snake @apple)
+      (do (ref-set apple (create-apple))
+          (alter snake move :grow))
+      (alter snake move)))
+  nil)
