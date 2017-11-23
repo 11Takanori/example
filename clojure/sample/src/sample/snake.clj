@@ -3,7 +3,7 @@
            (javax.swing JPanel JFrame Timer JOptionPane)
            (java.awt.event ActionListener KeyListner))
   (:use examples.import-static))
-(import-static java.awt.event.KeyEvent VK_LEFT VK_RIGHT VK_DOWN)
+(import-static java.awt.event.KeyEvent VK_LEFT VK_RIGHT VK_UP VK_DOWN)
 
 (def width 75)
 (def height 50)
