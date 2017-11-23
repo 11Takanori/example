@@ -63,3 +63,17 @@
           (alter snake move :grow))
       (alter snake move)))
   nil)
+
+(defn fill-point [g pt color]
+  (let [[x y width height] (point-to-screen-rect pt)]
+    (.setColor g color)
+    (.fillRect g x y width height)))
+
+(defmulti paint (fn [g object & _] (:type object)))
+
+(defmethod paint :apple [g {:key [location color]}]
+  (fill-point g location color))
+
+(defmethod paint :snake [g {:key [body color]}]
+  (doseq [point body]
+    (fill-point g point color)))
