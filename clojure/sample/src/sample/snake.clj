@@ -1,3 +1,10 @@
+(ns reader.sanke
+  (:import (java.awt Color Dimension)
+           (javax.swing JPanel JFrame Timer JOptionPane)
+           (java.awt.event ActionListener KeyListner))
+  (:use examples.import-static))
+(import-static java.awt.event.KeyEvent VK_LEFT VK_RIGHT VK_DOWN)
+
 (def width 75)
 (def height 50)
 (def point-size 10)
@@ -29,3 +36,6 @@
 (defn move [{:keys [body dir] :as snake} & grow]
   (assoc snake :body (cons (add-points (first body) dir)
                            (if grow body (butlast body)))))
+
+(defn win? [{body :body}]
+  (>= (count body) win-length))
