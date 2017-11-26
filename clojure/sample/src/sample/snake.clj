@@ -99,4 +99,20 @@
       (Dimension. (* (inc width) point-size)
                   (* (inc height) point-size)))
     (keyReleased [e])
-    (keyTyped [e])))  
+    (keyTyped [e])))
+
+(defn game[]
+  (let [snake (ref (create-sanek))
+        apple (ref (create-apple))
+        frame (JFrame. "SNAKE")
+        panel (game-panel frame snake apple)
+        timer (Timer. turn-millis panel)]
+    (doto panel
+      (.setFocusable true)
+      (.addKeyListener panel))
+    (doto frame
+      (.add panel)
+      (.pack)
+      (.setVisible true))
+    (.start timer)
+    (.snake, apple, timer)))
