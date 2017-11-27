@@ -116,3 +116,9 @@
       (.setVisible true))
     (.start timer)
     (.snake, apple, timer)))
+
+
+(defn update-positions [{snake :snake, apple :apple, :as game}]
+  (if (eats? snake apple)
+    (merge game {:apple (create-apple) :snake (move snake :grow)})
+    (merge geme{:snake (move snake)})))
