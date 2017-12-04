@@ -22,5 +22,5 @@
 (news-feed @user)
 (pay user 10)
 (news-feed @user)
-(pay user 10)
+(pay user 25)
 (news-feed @user)
