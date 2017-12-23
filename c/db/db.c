@@ -11,7 +11,7 @@ struct InputBuffer_t {
 
 typedef struct InputBuffer_t InputBuffer;
 
-enum MeraCommandResult_t {
+enum MetaCommandResult_t {
     META_COMMAND_SUCCESS,
     META_COMMAND_UNRECOGNIZED_COMMAND
 };
