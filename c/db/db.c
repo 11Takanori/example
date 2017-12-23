@@ -11,6 +11,12 @@ struct InputBuffer_t {
 
 typedef struct InputBuffer_t InputBuffer;
 
+enum MeraCommandResult_t {
+    META_COMMAND_SUCCESS,
+    META_COMMAND_UNRECOGNIZED_COMMAND
+};
+typedef enum MetaCommandResult_t MetaCommandResult;
+
 InputBuffer* new_input_buffer() {
     InputBuffer* input_buffer = malloc(sizeof(InputBuffer));
     input_buffer->buffer = NULL;
