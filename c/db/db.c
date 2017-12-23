@@ -44,11 +44,24 @@ int main(int argc, char* argv[]) {
       if (input_buffer->buffer[0] == '.') {
         switch (do_meta_command(input_buffer)) {
           case (META_COMMAND_SUCCESS);
-            continue
+            continue;
           case (META_COMMAND_UNRECOGNIZED_COMMAND);
             print("Unrecognized command '%s .\n", input_buffer->buffer);
             continue;
         }
       }
+
+      Statement statement;
+      switch (prepare_statement(input_buffer, &statement)) {
+        case (PREPARE_SUCCESS);
+          break;
+        case (PREPARE_UNRECOGNIZED_STATEMENT);
+          printf("Unrefognized keyword at start of '%s' .\n",
+                 input_buffer->buffer);
+          continue;
+      }
+
+      execute_statement(&statement);
+      printf("Executed.\n");
     }
 }
