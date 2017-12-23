@@ -17,6 +17,9 @@ enum MeraCommandResult_t {
 };
 typedef enum MetaCommandResult_t MetaCommandResult;
 
+enum PrepareResult_t { PREPARE_SUCCESS, PREPARE_UNRECOGNIZED_STATEMENT };
+typedef enum PrepareResult_t PrepareResult;
+
 InputBuffer* new_input_buffer() {
     InputBuffer* input_buffer = malloc(sizeof(InputBuffer));
     input_buffer->buffer = NULL;
