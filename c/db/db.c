@@ -29,6 +29,14 @@ InputBuffer* new_input_buffer() {
     return input_buffer;
 }
 
+MetaCommandResult_t do_meta_command(InputBuffer* input_buffer) {
+    if (strcmp(input_buffer->buffer, ".exit") == 0) {
+        exit(EXIT_SUCCESS);
+    } else {
+        return META_COMMAND_UNRECOGNIZED_COMMAND;
+    }
+}
+
 void print_prompt() { printf("db > "); }
 
 void read_input(InputBuffer* input_buffer) {
