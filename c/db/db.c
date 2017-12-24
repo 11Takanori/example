@@ -29,6 +29,14 @@ InputBuffer* new_input_buffer() {
     return input_buffer;
 }
 
+enum Statement_t { STATEMENT_INSERT, STATEMENT_SELECT };
+typedef enum StatementType_t StatementType;
+
+struct Statement_t {
+    StatementType type;
+};
+typedef struct Statement_t Statement;
+
 MetaCommandResult_t do_meta_command(InputBuffer* input_buffer) {
     if (strcmp(input_buffer->buffer, ".exit") == 0) {
         exit(EXIT_SUCCESS);
