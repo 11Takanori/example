@@ -29,7 +29,7 @@ InputBuffer* new_input_buffer() {
     return input_buffer;
 }
 
-enum Statement_t { STATEMENT_INSERT, STATEMENT_SELECT };
+enum StatementType_t { STATEMENT_INSERT, STATEMENT_SELECT };
 typedef enum StatementType_t StatementType;
 
 struct Statement_t {
@@ -37,22 +37,37 @@ struct Statement_t {
 };
 typedef struct Statement_t Statement;
 
-MetaCommandResult_t do_meta_command(InputBuffer* input_buffer) {
+MetaCommandResult do_meta_command(InputBuffer* input_buffer) {
     if (strcmp(input_buffer->buffer, ".exit") == 0) {
-        exit(EXIT_SUCCESS);
+      exit(EXIT_SUCCESS);
     } else {
-        return META_COMMAND_UNRECOGNIZED_COMMAND;
+      return META_COMMAND_UNRECOGNIZED_COMMAND;
     }
 }
 
 PrepareResult prepare_statement(InputBuffer* input_buffer,
                                 Statement* statement) {
-  if (strcmp(input_buffer->buffer, "select") == 0) {
-      Statement->type = STATEMENT_SELECT;
+  if (strncmp(input_buffer->buffer, "insert", 6) == 0) {
+      statement->type = STATEMENT_INSERT;
       return PREPARE_SUCCESS;
+  }
+  if (strcmp(input_buffer->buffer, "select") == 0) {
+    statement->type = STATEMENT_SELECT;
+    return PREPARE_SUCCESS;
   }
 
   return PREPARE_UNRECOGNIZED_STATEMENT;
+}
+
+void execute_statement(Statement* statement) {
+    switch (statement->type) {
+      case (STATEMENT_INSERT):
+        printf("This is where we would do an insert.\n");
+        break;
+      case (STATEMENT_SELECT):
+        printf("This is where we would do a select.\n");
+        break;
+    }
 }
 
 void print_prompt() { printf("db > "); }
@@ -78,19 +93,19 @@ int main(int argc, char* argv[]) {
 
       if (input_buffer->buffer[0] == '.') {
         switch (do_meta_command(input_buffer)) {
-          case (META_COMMAND_SUCCESS);
+          case (META_COMMAND_SUCCESS):
             continue;
-          case (META_COMMAND_UNRECOGNIZED_COMMAND);
-            print("Unrecognized command '%s .\n", input_buffer->buffer);
+          case (META_COMMAND_UNRECOGNIZED_COMMAND):
+            printf("Unrecognized command '%s .\n", input_buffer->buffer);
             continue;
         }
       }
 
       Statement statement;
       switch (prepare_statement(input_buffer, &statement)) {
-        case (PREPARE_SUCCESS);
+        case (PREPARE_SUCCESS):
           break;
-        case (PREPARE_UNRECOGNIZED_STATEMENT);
+        case (PREPARE_UNRECOGNIZED_STATEMENT):
           printf("Unrefognized keyword at start of '%s' .\n",
                  input_buffer->buffer);
           continue;
