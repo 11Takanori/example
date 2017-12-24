@@ -45,6 +45,16 @@ MetaCommandResult_t do_meta_command(InputBuffer* input_buffer) {
     }
 }
 
+PrepareResult prepare_statement(InputBuffer* input_buffer,
+                                Statement* statement) {
+  if (strcmp(input_buffer->buffer, "select") == 0) {
+      Statement->type = STATEMENT_SELECT;
+      return PREPARE_SUCCESS;
+  }
+
+  return PREPARE_UNRECOGNIZED_STATEMENT;
+}
+
 void print_prompt() { printf("db > "); }
 
 void read_input(InputBuffer* input_buffer) {
