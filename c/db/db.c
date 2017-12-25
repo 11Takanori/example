@@ -79,7 +79,7 @@ void serialize_row(Row* source, void* destination) {
 
 void deserialize_row(void* source, Row* destination) {
   memcpy(&(destination->id), source + ID_OFFSET, ID_SIZE);
-  memcpy(&(destination->username), source + USERNAME_OFFSET, USERNAME_OFFSET);
+  memcpy(&(destination->username), source + USERNAME_OFFSET, USERNAME_SIZE);
   memcpy(&(destination->email), source + EMAIL_OFFSET, EMAIL_SIZE);
 }
 
