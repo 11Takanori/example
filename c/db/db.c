@@ -32,8 +32,18 @@ InputBuffer* new_input_buffer() {
 enum StatementType_t { STATEMENT_INSERT, STATEMENT_SELECT };
 typedef enum StatementType_t StatementType;
 
+const uint32_t COLUMN_USERNAME_SIZE = 32;
+const uint32_t COLUMN_EMAIL_SIZE = 255;
+struct Row_t {
+    uint32_t id;
+    char username[COLUMN_USERNAME_SIZE];
+    char email[COLUMN_EMAIL_SIZE];
+};
+typedef struct Row_t Row;
+
 struct Statement_t {
     StatementType type;
+    Row row_to_insert; // only used by insert statement
 };
 typedef struct Statement_t Statement;
 
