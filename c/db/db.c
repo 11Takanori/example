@@ -132,7 +132,10 @@ PrepareResult prepare_insert(InputBuffer* input_buffer, Statement* statement) {
     }
 
     int id = atoi(id_string);
-    if (strlen(username) > COLUMN_EMAIL_SIZE) {
+    if (strlen(username) > COLUMN_USERNAME_SIZE) {
+      return PREPARE_STRING_TOO_LONG;
+    }
+    if (strlen(email) > COLUMN_EMAIL_SIZE) {
       return PREPARE_STRING_TOO_LONG;
     }
 
@@ -142,6 +145,7 @@ PrepareResult prepare_insert(InputBuffer* input_buffer, Statement* statement) {
 
     return PREPARE_SUCCESS;
 }
+
 
 PrepareResult prepare_statement(InputBuffer* input_buffer,
                                 Statement* statement) {
