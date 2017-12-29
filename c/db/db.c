@@ -101,9 +101,39 @@ void* row_slot(Table* table, uint32_t row_num) {
     return page + byte_offset;
 }
 
-Table* new_table() {
+Pager* pager_open(const char* filename) {
+  int fd = open(filename,
+                O_RDWR |     // Read/Write mode
+                    O_CREAT, // Create file if it does not exist
+                S_IWUSR |    // User write permission
+                    S_IRUSR  // User read permission
+                );
+
+  if (fd == -1) {
+    printf("Unable to open file\n");
+    exit(EXIT_FAILURE);
+  }
+
+  off_t file_lenght = lseek(fd, 0, SEEK_END);
+
+  Pager* pager = malloc(sizeof(Pager));
+  pager->file_description = fd;
+  pager->file_lenght = file_lenght;
+
+  for (uint32_t i = 0; i < TABLE_MAX_PAGES; i++) {
+    pager->pages[i] = NULL;
+  }
+
+  return pager;
+}
+
+Table* db_open(const char* filename) {
+  Pager* pager = pager_open(filename);
+  uint32_t num_rows = pager->file_lenght / ROW_SIZE;
+
   Table* table = malloc(sizeof(Table));
-  table->num_rows = 0;
+  table->pager = pager;
+  table->num_rows = num_rows;
 
   return table;
 }
