@@ -8,7 +8,6 @@ struct InputBuffer_t {
   size_t buffer_length;
   ssize_t input_lenght;
 };
-
 typedef struct InputBuffer_t InputBuffer;
 
 enum ExecuteResult_t { EXECUTE_SUCCESS, EXECUTE_TABLE_FULL };
@@ -61,8 +60,15 @@ const uint32_t TABLE_MAX_PAGES = 100;
 const uint32_t ROWS_PER_PAGE = PAGE_SIZE / ROW_SIZE;
 const uint32_t TABLE_MAX_ROWS = ROWS_PER_PAGE * TABLE_MAX_PAGES;
 
-struct Table_t {
+struct Pager_t {
+  int file_description;
+  uint32_t file_lenght;
   void* pages[TABLE_MAX_PAGES];
+};
+typedef struct Pager_t Pager
+
+struct Table_t {
+  Pager* pager;
   uint32_t num_rows;
 };
 typedef struct Table_t Table;
