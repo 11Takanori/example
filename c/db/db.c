@@ -176,12 +176,24 @@ InputBuffer* new_input_buffer() {
   return input_buffer;
 }
 
-MetaCommandResult do_meta_command(InputBuffer* input_buffer, Table* table) {
-  if (strcmp(input_buffer->buffer, ".exit") == 0) {
-    db_close(table);
-    exit(EXIT_SUCCESS);
-  } else {
-    return META_COMMAND_UNRECOGNIZED_COMMAND;
+void pager_flush(Pager* pager, uint32_t page_num, uint32_t size) {
+  if (pager->pages[page_num] == NULL) {
+    printf("Tried to flush null page\n");
+    exit(EXIT_FAILURE);
+  }
+
+  off_t offset = lseek(pager->file_description, page_num * PAGE_SIZE, SEEK_SET);
+
+  if (offset == -1) {
+    printf("Error seeking: %d\n", errno);
+    exit(EXIT_FAILURE);
+  }
+
+  ssize_t bytes_written = write(pager->file_description, pager->pages[page_num], size);
+
+  if (bytes_written == -1) {
+    printf("Error writing: %d\n", errno);
+    exit(EXIT_FAILURE);
   }
 }
 
@@ -281,6 +293,15 @@ void db_close(Table* table) {
   free(pager);
 }
 
+MetaCommandResult do_meta_command(InputBuffer* input_buffer, Table* table) {
+  if (strcmp(input_buffer->buffer, ".exit") == 0) {
+    db_close(table);
+    exit(EXIT_SUCCESS);
+  } else {
+    return META_COMMAND_UNRECOGNIZED_COMMAND;
+  }
+}
+
 ExecuteResult execute_insert(Statement* statement, Table* table) {
   if (table->num_rows >= TABLE_MAX_ROWS) {
     return EXECUTE_TABLE_FULL;
@@ -327,7 +348,7 @@ int main(int argc, char* argv[]) {
       read_input(input_buffer);
 
       if (input_buffer->buffer[0] == '.') {
-        switch (do_meta_command(input_buffer)) {
+        switch (do_meta_command(input_buffer , table)) {
           case (META_COMMAND_SUCCESS):
             continue;
           case (META_COMMAND_UNRECOGNIZED_COMMAND):
