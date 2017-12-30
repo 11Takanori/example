@@ -76,6 +76,13 @@ struct Table_t {
 };
 typedef struct Table_t Table;
 
+struct Cursor_t {
+  Table* table;
+  uint32_t row_num;
+  bool end_of_table;
+};
+typedef struct Cursor_t Cursor;
+
 void print_row(Row* row) {
   printf("(%d, %s, %s)\n", row->id, row->username, row->email);
 }
