@@ -123,11 +123,11 @@ void deserialize_row(void* source, Row* destination) {
 }
 
 void* row_slot(Table* table, uint32_t row_num) {
-    uint32_t page_num = row_num / ROWS_PER_PAGE;
-    void* page = get_page(table->pager, page_num);
-    uint32_t row_offset = row_num % ROWS_PER_PAGE;
-    uint32_t byte_offset = row_offset * ROW_SIZE;
-    return page + byte_offset;
+  uint32_t page_num = row_num / ROWS_PER_PAGE;
+  void* page = get_page(table->pager, page_num);
+  uint32_t row_offset = row_num % ROWS_PER_PAGE;
+  uint32_t byte_offset = row_offset * ROW_SIZE;
+  return page + byte_offset;
 }
 
 Pager* pager_open(const char* filename) {
