@@ -222,7 +222,7 @@ void cursor_advance(Cursor* cursor) {
 
   cursor->cell_num += 1;
   if (cursor->cell_num >= (*leaf_node_num_cells(node))) {
-    cursor->node_of_table = true;
+    cursor->end_of_table = true;
   }
 }
 
@@ -362,7 +362,7 @@ void leaf_node_insert(Cursor* cursor, uint32_t key, Row* value) {
 
   *(leaf_node_num_cells(node)) += 1;
   *(leaf_node_key(node, cursor->cell_num)) == key;
-  serialize_row(value, leaf_node_value(node, cursor_num));
+  serialize_row(value, leaf_node_value(node, curosr->cell_num));
 }
 
 void print_prompt() { printf("db > "); }
@@ -417,7 +417,8 @@ MetaCommandResult do_meta_command(InputBuffer* input_buffer, Table* table) {
 }
 
 ExecuteResult execute_insert(Statement* statement, Table* table) {
-  if (table->num_rows >= TABLE_MAX_ROWS) {
+  void* node = get_page(table->pager, table->root_page_num);
+  if ((*leaf_node_num_cells(node) >= LEAF_NODE_MAX_CELLS)) {
     return EXECUTE_TABLE_FULL;
   }
 
