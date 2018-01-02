@@ -13,7 +13,11 @@ struct InputBuffer_t {
 };
 typedef struct InputBuffer_t InputBuffer;
 
-enum ExecuteResult_t { EXECUTE_SUCCESS, EXECUTE_TABLE_FULL };
+enum ExecuteResult_t {
+  EXECUTE_SUCCESS,
+  EXECUTE_DUPLICATE_KEY,
+  EXECUTE_TABLE_FULL
+};
 typedef enum ExecuteResult_t ExecuteResult;
 
 enum MetaCommandResult_t {
@@ -579,6 +583,9 @@ int main(int argc, char* argv[]) {
       switch (execute_statement(&statement, table)) {
         case (EXECUTE_SUCCESS):
           printf("Executed.\n");
+          break;
+        case (EXECUTE_DUPLICATE_KEY):
+          printf("Error: Duplicate key.\n");
           break;
         case (EXECUTE_TABLE_FULL):
           printf("Error: Table full.\n");
