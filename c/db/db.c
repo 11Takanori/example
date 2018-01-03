@@ -663,16 +663,16 @@ void leaf_node_insert(Cursor* cursor, uint32_t key, Row* value) {
 void print_prompt() { printf("db > "); }
 
 void read_input(InputBuffer* input_buffer) {
-    ssize_t bytes_read =
-        getline(&(input_buffer->buffer), &(input_buffer->buffer_length), stdin);
+  ssize_t bytes_read =
+    getline(&(input_buffer->buffer), &(input_buffer->buffer_length), stdin);
 
-    if (bytes_read <= 0) {
-      printf("Error reading input\n");
-      exit(EXIT_FAILURE);
-    }
+  if (bytes_read <= 0) {
+    printf("Error reading input\n");
+    exit(EXIT_FAILURE);
+  }
 
-    input_buffer->input_lenght = bytes_read - 1;
-    input_buffer->buffer[bytes_read - 1] = 0;
+  input_buffer->input_lenght = bytes_read - 1;
+  input_buffer->buffer[bytes_read - 1] = 0;
 }
 
 ExecuteResult execute_insert(Statement* statement, Table* table) {
