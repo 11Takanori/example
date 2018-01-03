@@ -28,6 +28,7 @@ typedef enum MetaCommandResult_t MetaCommandResult;
 
 enum PrepareResult_t {
   PREPARE_SUCCESS,
+  PREPARE_NEGATIVE_ID,
   PREPARE_STRING_TOO_LONG,
   PREPARE_SYNTAX_ERROR,
   PREPARE_UNRECOGNIZED_STATEMENT
@@ -171,8 +172,8 @@ uint32_t* internal_node_right_child(void* node) {
   return node + INTERNAL_NODE_RIGHT_CHILD_OFFSET;
 }
 
-uint32_t internal_node_cell(void* node, uint32_t cell_num) {
-  return node + INTERNAL_NODE_CHILD_SIZE + cell_num * INTERNAL_NODE_CELL_SIZE;
+uint32_t* internal_node_cell(void* node, uint32_t cell_num) {
+  return node + INTERNAL_NODE_HEADER_SIZE + cell_num * INTERNAL_NODE_CELL_SIZE;
 }
 
 uint32_t* internal_node_child(void* node, uint32_t child_num) {
@@ -223,30 +224,6 @@ void print_constants() {
   printf("LEAF_NODE_CELL_SIZE: %d\n", LEAF_NODE_CELL_SIZE);
   printf("LEAF_NODE_SPACE_FOR_CELLS: %d\n", LEAF_NODE_SPACE_FOR_CELLS);
   printf("LEAF_NODE_MAX_CELLS: %d\n", LEAF_NODE_MAX_CELLS);
-}
-
-void serialize_row(Row* source, void* destination) {
-  memcpy(destination + ID_OFFSET, &(source->id), ID_SIZE);
-  memcpy(destination + USERNAME_OFFSET, &(source->username), USERNAME_SIZE);
-  memcpy(destination + EMAIL_OFFSET, &(source->email), EMAIL_SIZE);
-}
-
-void deserialize_row(void* source, Row* destination) {
-  memcpy(&(destination->id), source + ID_OFFSET, ID_SIZE);
-  memcpy(&(destination->username), source + USERNAME_OFFSET, USERNAME_SIZE);
-  memcpy(&(destination->email), source + EMAIL_OFFSET, EMAIL_SIZE);
-}
-
-void initialize_leaf_node(void* node) {
-  set_node_type(node, NODE_LEAF);
-  set_node_root(node, false);
-  *leaf_node_num_cells(node) = 0;
-}
-
-void initialize_internal_node(void* node) {
-  set_node_type(node, NODE_LEAF);
-  set_node_root(node, false);
-  *internal_node_num_keys(node) = 0;
 }
 
 void* get_page(Pager* pager, uint32_t page_num) {
@@ -320,6 +297,30 @@ void print_tree(Pager* pager, uint32_t page_num, uint32_t indentation_level) {
   }
 }
 
+void serialize_row(Row* source, void* destination) {
+  memcpy(destination + ID_OFFSET, &(source->id), ID_SIZE);
+  memcpy(destination + USERNAME_OFFSET, &(source->username), USERNAME_SIZE);
+  memcpy(destination + EMAIL_OFFSET, &(source->email), EMAIL_SIZE);
+}
+
+void deserialize_row(void* source, Row* destination) {
+  memcpy(&(destination->id), source + ID_OFFSET, ID_SIZE);
+  memcpy(&(destination->username), source + USERNAME_OFFSET, USERNAME_SIZE);
+  memcpy(&(destination->email), source + EMAIL_OFFSET, EMAIL_SIZE);
+}
+
+void initialize_leaf_node(void* node) {
+  set_node_type(node, NODE_LEAF);
+  set_node_root(node, false);
+  *leaf_node_num_cells(node) = 0;
+}
+
+void initialize_internal_node(void* node) {
+  set_node_type(node, NODE_LEAF);
+  set_node_root(node, false);
+  *internal_node_num_keys(node) = 0;
+}
+
 Cursor* leaf_node_find(Table* table, uint32_t page_num, uint32_t key) {
   void* node = get_page(table->pager, page_num);
   uint32_t num_cells = *leaf_node_num_cells(node);
@@ -349,6 +350,34 @@ Cursor* leaf_node_find(Table* table, uint32_t page_num, uint32_t key) {
   return cursor;
 }
 
+Cursor* internal_node_find(Table* table, uint32_t page_num, uint32_t key) {
+  void* node = get_page(table->pager, page_num);
+  uint32_t num_keys = *internal_node_num_keys(node);
+
+  /* Binary search to find index of child to search */
+  uint32_t min_index = 0;
+  uint32_t max_index = num_keys; /* there is one more child than key */
+
+  while (min_index != max_index) {
+    uint32_t index = (min_index + max_index) / 2;
+    uint32_t key_to_right = *internal_node_key(node, index);
+    if (key_to_right >= key) {
+      max_index = index;
+    } else {
+      min_index = index + 1;
+    }
+  }
+
+  uint32_t child_num = *internal_node_child(node, min_index);
+  void* child = get_page(table->pager, child_num);
+  switch (get_node_type(child)) {
+    case NODE_LEAF:
+      return leaf_node_find(table, child_num, key);
+    case NODE_INTERNAL:
+      return internal_node_find(table, child_num, key);
+  }
+}
+
 /*
 Return the position of the given key.
 If the key is not present, return the position
@@ -361,16 +390,12 @@ Cursor* table_find(Table* table, uint32_t key) {
   if (get_node_type(root_node) == NODE_LEAF) {
     return leaf_node_find(table, root_page_num, key);
   } else {
-    printf("Need to implement searching an internal node\n");
-    exit(EXIT_FAILURE);
+    return internal_node_find(table, root_page_num, key);
   }
 }
 
 Cursor* table_start(Table* table) {
-  Cursor* cursor = malloc(sizeof(Cursor));
-  cursor->table = table;
-  cursor->page_num = table->root_page_num;
-  cursor->cell_num = 0;
+  Cursor* cursor = table_find(table, 0);
 
   void* root_node = get_page(table->pager, table->root_page_num);
   uint32_t num_cells = *leaf_node_num_cells(root_node);
@@ -439,16 +464,32 @@ Table* db_open(const char* filename) {
     initialize_leaf_node(root_node);
     set_node_root(root_node, true);
   }
+
   return table;
 }
 
 InputBuffer* new_input_buffer() {
   InputBuffer* input_buffer = malloc(sizeof(InputBuffer));
   input_buffer->buffer = NULL;
-  input_buffer->input_lenght = 0;
+  input_buffer->buffer_length = 0;
   input_buffer->input_lenght = 0;
 
   return input_buffer;
+}
+
+void print_prompt() { printf("db > "); }
+
+void read_input(InputBuffer* input_buffer) {
+  ssize_t bytes_read =
+    getline(&(input_buffer->buffer), &(input_buffer->buffer_length), stdin);
+
+  if (bytes_read <= 0) {
+    printf("Error reading input\n");
+    exit(EXIT_FAILURE);
+  }
+
+  input_buffer->input_lenght = bytes_read - 1;
+  input_buffer->buffer[bytes_read - 1] = 0;
 }
 
 void pager_flush(Pager* pager, uint32_t page_num) {
@@ -529,6 +570,9 @@ PrepareResult prepare_insert(InputBuffer* input_buffer, Statement* statement) {
     }
 
     int id = atoi(id_string);
+    if (id < 0) {
+      return PREPARE_NEGATIVE_ID;
+    }
     if (strlen(username) > COLUMN_USERNAME_SIZE) {
       return PREPARE_STRING_TOO_LONG;
     }
@@ -559,7 +603,7 @@ PrepareResult prepare_statement(InputBuffer* input_buffer,
 
 /*
 Until we start recycling free pages, new pages will always
-go onto the end of dateabase file
+go onto the end of the dateabase file
 */
 uint32_t get_unused_page_num(Pager* pager) { return pager->num_pages; }
 
@@ -660,21 +704,6 @@ void leaf_node_insert(Cursor* cursor, uint32_t key, Row* value) {
   serialize_row(value, leaf_node_value(node, cursor->cell_num));
 }
 
-void print_prompt() { printf("db > "); }
-
-void read_input(InputBuffer* input_buffer) {
-  ssize_t bytes_read =
-    getline(&(input_buffer->buffer), &(input_buffer->buffer_length), stdin);
-
-  if (bytes_read <= 0) {
-    printf("Error reading input\n");
-    exit(EXIT_FAILURE);
-  }
-
-  input_buffer->input_lenght = bytes_read - 1;
-  input_buffer->buffer[bytes_read - 1] = 0;
-}
-
 ExecuteResult execute_insert(Statement* statement, Table* table) {
   void* node = get_page(table->pager, table->root_page_num);
   uint32_t num_cells = (*leaf_node_num_cells(node));
@@ -749,6 +778,9 @@ int main(int argc, char* argv[]) {
       switch (prepare_statement(input_buffer, &statement)) {
         case (PREPARE_SUCCESS):
           break;
+        case (PREPARE_NEGATIVE_ID):
+          printf("ID must be positive.\n");
+          continue;
         case (PREPARE_STRING_TOO_LONG):
           printf("String is too long.\n");
           continue;
