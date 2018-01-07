@@ -1,4 +1,5 @@
 use std::io::{self, BufRead, Write};
+use std::process;
 
 #[derive(Debug)]
 struct InputBuffer {
@@ -17,15 +18,15 @@ fn main() {
     let stdin = io::stdin();
 
     loop {
-        print!(">> ");
+        print!("db > ");
         io::stdout().flush().expect("Error flushing stdout");
 
         let mut line = String::new();
         stdin.lock().read_line(&mut line).expect("Error reading from stdin");
 
-        match &*line {
-            ".exit\n" => println!("{}", "matched"),
-            _ => println!("{}", "not matched"),
+        match line.trim() {
+            ".exit" => process::exit(0x0100),
+            _ => println!("Unrecognized command {}.", line.trim()),
         }
     }
 }
