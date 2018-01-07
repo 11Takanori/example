@@ -24,8 +24,8 @@ fn main() {
         stdin.lock().read_line(&mut line).expect("Error reading from stdin");
 
         match &*line {
-            ".exit" => println!("{}", line),
-            _ => println!("{}", "hoge"),
+            ".exit\n" => println!("{}", "matched"),
+            _ => println!("{}", "not matched"),
         }
     }
 }
