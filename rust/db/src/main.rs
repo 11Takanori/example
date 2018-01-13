@@ -35,7 +35,8 @@ enum PrepareResult {
 
 impl PrepareResult {
     fn parepare_statement(line: &String, statement: &mut Statement) -> PrepareResult {
-        match line.trim() {
+        match &line[0..6] {
+            // 条件を変更する
             "insert" => {
                 statement.t = StatementType::StatementInsert;
                 return PrepareResult::PrepareSuccess;
