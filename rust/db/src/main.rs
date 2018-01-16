@@ -16,6 +16,13 @@ impl MetaCommandResult {
     }
 }
 
+#[derive(Default, Debug)]
+struct Row {
+    id: u32,
+    username: &'static str,
+    email: &'static str,
+}
+
 #[derive(Debug)]
 enum StatementType {
     StatementInsert,
@@ -24,7 +31,17 @@ enum StatementType {
 
 #[derive(Debug)]
 struct Statement {
-    t: StatementType
+    t: StatementType,
+    row_to_insert: Row,
+}
+
+impl Statement {
+     fn new() -> Statement {
+         Statement {
+             t: StatementType::StatementSelect,
+             row_to_insert: Row::default(),
+         }
+     }
 }
 
 #[derive(Debug)]
@@ -76,7 +93,7 @@ fn main() {
             }
         }
 
-        let mut statement = Statement{ t: StatementType::StatementSelect };
+        let mut statement = Statement::new();
         match PrepareResult::parepare_statement(&line, &mut statement) {
             PrepareResult::PrepareSuccess => {
                 execute_statement(statement);
