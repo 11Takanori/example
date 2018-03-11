@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 container_name = ARGV[0]
 raise unless container_name
-Dir.mkdir "sys/fs/cgroup/cpu/#{container_name}" rescue puts("skip")
+Dir.mkdir "/sys/fs/cgroup/cpu/#{container_name}" rescue puts("skip")
 File.write "/sys/fs/cgroup/cpu/#{container_name}/tasks", $$.to_s
 Dir.chroot "/root/#{container_name}"
 Dir.chdir "/"
