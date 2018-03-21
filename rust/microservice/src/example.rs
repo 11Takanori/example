@@ -1,10 +1,22 @@
-[package]
-name = "microservice_rs"
-version = "0.1.0"
-authors = ["you <you@email>"]
+fn main() {
+    env_logger::init();
+    let address = "127.0.0.1:8080".parse().unwrap();
+    let server = hyper::server::Http::new()
+        .bind(&address, || Ok(Microservice {}))
+        .unwrap();
+    info!("Running microservice at {}", address);
+    server.run().unwrap();
+}
 
-[dependencies]
-env_logger = "0.5.3"
-futures = "0.1.17"
-hyper = "0.11.13"
-log = "0.4.1"
+
+impl Service for Microservice {
+    type Request = Request;
+    type Response = Response;
+    type Error = hyper::Error;
+    type Future = Box<Future<Item = Self::Response, Error = Self::Error>>;
+
+    fn call(&self, request: Request) -> Self::Future {
+        info!("Microservice received a request: {:?}", request);
+        Box::new(futures::future::ok(Response::new()))
+    }
+}
