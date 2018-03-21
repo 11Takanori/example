@@ -1,0 +1,10 @@
+[package]
+name = "microservice"
+version = "0.1.0"
+authors = ["Takanori Ishibashi <takanori.1112@gmail.com>"]
+
+[dependencies]
+env_logger = "0.5.3"
+futures = "0.1.17"
+hyper = "0.11.13"
+log = "0.4.1"7"
