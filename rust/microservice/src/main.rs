@@ -1,6 +1,9 @@
+#![feature(proc_macro)]
+
 extern crate futures;
 extern crate hyper;
 extern crate url;
+extern crate maud;
 
 extern crate env_logger;
 #[macro_use]
@@ -21,8 +24,18 @@ use std::collections::HashMap;
 use std::io;
 use std::error::Error;
 
+mod models;
+mod schema;
+
+use models::{Message};
+
 
 struct Microservice;
+
+struct TimeRange {
+    before: Option<i64>,
+    after: Option<i64>,
+}
 
 struct NewMessage {
     username: String,
@@ -69,6 +82,31 @@ fn make_post_response(
     }
 }
 
+fn parse_query(query: &str) -> Result<TimeRange, String> {
+    let args = url::form_urlencoded::parse(&query.as_bytes())
+        .into_owned()
+        .collect::<HashMap<String, String>>();
+
+    let before = args.get("before").map(|v| v.parse::<i64>());
+    if let Some(ref result) = before {
+        if let Err(ref error) = *result {
+            return Err(format!("Error parsing `before`: {}", error));
+        }
+    }
+
+    let after = args.get("after").map(|v| v.parse::<i64>());
+    if let Some(ref result) = after {
+        if let Err(ref error) = *result {
+            return Err(format!("Error parsing `after`: {}", error));
+        }
+    }
+
+    Ok(TimeRange {
+        before: before.map(|b| b.unwrap()),
+        after: after.map(|a| a.unwrap()),
+    })
+}
+
 fn make_error_response(error_message: &str) -> FutureResult<hyper::Response, hyper::Error> {
     let payload = json!({"error": error_message}).to_string();
     let response = Response::new()
@@ -78,6 +116,12 @@ fn make_error_response(error_message: &str) -> FutureResult<hyper::Response, hyp
         .with_body(payload);
     debug!("{:?}", response);
     futures::future::ok(response)
+}
+
+fn make_get_response(
+    messages: Option<Vec<Message>>,
+) -> FutureResult<hyper::Response, hyper::Error> {
+
 }
 
 impl Service for Microservice {
@@ -96,6 +140,20 @@ impl Service for Microservice {
                     .and_then(write_to_db)
                     .then(make_post_response);
                 Box::new(future)
+            }
+            (&Get, "/") => {
+                let time_range = match req.query() {
+                    Some(query) => parse_query(query),
+                    None => Ok(TimeRange {
+                        before: None,
+                        after: None,
+                    }),
+                };
+                let response = match time_range {
+                    Ok(time_range) => make_get_response(query_db(time_range, &db_connection)),
+                    Err(error) => make_error_response(&error),
+                };
+                Box::new(response)
             }
             _ => Box::new(futures::future::ok(
                 Response::new().with_status(StatusCode::NotFound)
