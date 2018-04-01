@@ -1,5 +1,4 @@
 extern crate rayon;
-extern crate rand;
 
 use rayon::prelude::*;
 
@@ -29,6 +28,9 @@ fn main() {
         .filter(|&x| x > 30)
         .sum();
 
-    println!("{:?}", alt_sum_30);
+    let avg_over_30 = sum_over_30 as f32 / num_over_30;
+    let alt_avg_over_30 = alt_sum_30 as f32/ num_over_30;
 
+    assert!((avg_over_30 - alt_avg_over_30).abs() < std::f32::EPSILON);
+    println!("The average age of people older than 30 is {}", avg_over_30);
 }
