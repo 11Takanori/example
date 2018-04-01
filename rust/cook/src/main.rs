@@ -1,34 +1,25 @@
-extern crate rayon;
-extern crate rand;
+extern crate crossbeam;
 
-use rayon::prelude::*;
+use std::cmp;
 
-struct Person {
-    age: u32,
+fn find_max(arr: &[i32], start: usize, end: usize) -> i32 {
+    const THRESHOLD: usize = 2;
+    if end - start <= THRESHOLD {
+        return *arr.iter().max().unwrap();
+    }
+
+    let mid = start + (end - start) / 2;
+    crossbeam::scope(|scope| {
+        let left = scope.spawn(|| find_max(arr, start, mid));
+        let right = scope.spawn(|| find_max(arr, mid, end));
+
+        cmp::max(left.join(), right.join())
+    })
 }
 
 fn main() {
-    let v: Vec<Person> = vec![
-        Person { age: 23 },
-        Person { age: 19 },
-        Person { age: 42 },
-        Person { age: 17 },
-        Person { age: 17 },
-        Person { age: 31 },
-        Person { age: 30 },
-    ];
+    let arr = &[-4, 1, 10, 25];
+    let max = find_max(arr, 0, arr.len());
 
-    let num_over_30 = v.par_iter().filter(|&x| x.age > 30).count() as f32;
-    let sum_over_30 = v.par_iter()
-        .map(|x| x.age)
-        .filter(|&x| x > 30)
-        .reduce(|| 0, |x, y| x + y);
-
-    let alt_sum_30: u32 = v.par_iter()
-        .map(|x| x.age)
-        .filter(|&x| x > 30)
-        .sum();
-
-    println!("{:?}", alt_sum_30);
-
+    assert_eq!(25, max);
 }
